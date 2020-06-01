@@ -1,5 +1,6 @@
 export interface BookItem {
     isbn: string
+    categoryId: string
     lenderId: string
     title: string
     author: string
