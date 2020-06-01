@@ -6,4 +6,5 @@ export interface CreateBookRequest {
     title: string
     author: string
     publishDate: string
+    categoryId: string
   }
