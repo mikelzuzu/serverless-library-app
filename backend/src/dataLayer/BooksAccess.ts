@@ -237,24 +237,24 @@ export class BookAccess {
     logger.info('Book updated!')
   }
 
-  async updateAttachment(isbn: string, title: string, publishedDate: string, attachmentUrl: string): Promise<void> {
+  async updateAttachment(isbn: string, categoryId: string, publishedDate: string, attachmentUrl: string): Promise<void> {
     logger.info(`Updating attachment for Book with isbn ${isbn}`)
     try {
         await this.docClient.update({
         TableName: this.booksTable,
         Key: {
-            isbn,
+            categoryId,
             publishedDate
         },
-        ConditionExpression: "#title = :title_val",
+        ConditionExpression: "#isbn = :isbn_val",
         UpdateExpression: 'SET #attachmentUrl = :attachmentUrl_val',
         ExpressionAttributeValues:{
-            ":title_val": title,
+            ":isbn_val": isbn,
             ":attachmentUrl_val": attachmentUrl,
 
         },
         ExpressionAttributeNames: {
-          "#title": "title",
+          "#isbn": "isbn",
           "#attachmentUrl": "attachmentUrl"
         },
         ReturnValues: "UPDATED_NEW"
@@ -267,16 +267,16 @@ export class BookAccess {
     logger.info('Attachment updated!')
   }
 
-  async deleteBook(isbn: string, publishedDate: string): Promise<void> {
+  async deleteBook(isbn: string, categoryId: string, publishedDate: string): Promise<void> {
     logger.info(`Deleting Book with isbn ${isbn}`)
     try {
         await this.docClient.delete({
         TableName: this.booksTable,
         Key: {
-            isbn,
+            categoryId,
             publishedDate
         },
-        ConditionExpression:"borrowed = false"
+        ConditionExpression:"borrowed = false and isbn = :isbn_val"
         }).promise()
     } catch(error) {
         logger.error('Book not deleted', { error:error.message});

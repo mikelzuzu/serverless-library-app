@@ -1,12 +1,12 @@
 export interface BookItem {
     isbn: string
     categoryId: string
-    lenderId: string
+    lenderId?: string
     title: string
     author: string
     publishDate: string
     borrowed: boolean
-    borrowedDate:string
+    borrowedDate?:string
     attachmentUrl?: string
   }
   
