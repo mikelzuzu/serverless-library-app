@@ -1,14 +1,12 @@
 import * as AWS  from 'aws-sdk'
 //import * as AWSXRay from 'aws-xray-sdk'
-import { DocumentClient } from 'aws-sdk/clients/dynamodb'
+import { DocumentClient, Key } from 'aws-sdk/clients/dynamodb'
 import { CategoryItem } from '../models/CategoryItem'
 import { createLogger } from '../utils/logger';
 
 const AWSXRay = require('aws-xray-sdk');
 const XAWS = AWSXRay.captureAWS(AWS)
 const logger = createLogger('CategoryAccess')
-
-
 
 export class CategoryAccess {
 
@@ -18,7 +16,7 @@ export class CategoryAccess {
   }
 
   async getAllCategories(): Promise<CategoryItem[]> {
-    console.log('Getting all groups')
+    logger.info('Getting all categories')
 
     const result = await this.docClient.scan({
       TableName: this.categoriesTable
@@ -28,7 +26,23 @@ export class CategoryAccess {
     return items as CategoryItem[]
   }
 
+  async getAllCategoriesPagination(limit: number, nextKey: Key): Promise<DocumentClient.QueryOutput> {
+    logger.info('Getting all categories')
+
+    const result = await this.docClient.query({
+      TableName: this.categoriesTable,
+      ScanIndexForward: false,
+      Limit: limit,
+      ExclusiveStartKey: nextKey
+    }).promise()
+
+    const items = result.Items
+    logger.info(`List of categories`, { Todos:items })
+    return result
+  }
+
   async createCategory(category: CategoryItem): Promise<CategoryItem> {
+    logger.info('Creating a category')
     await this.docClient.put({
       TableName: this.categoriesTable,
       Item: category
