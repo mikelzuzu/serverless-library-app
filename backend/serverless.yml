@@ -188,7 +188,7 @@ functions:
     events:
       - http:
           method: get
-          path: booksLender
+          path: books/borrowed
           cors: true
           authorizer: Auth
     iamRoleStatements:
@@ -230,7 +230,7 @@ functions:
     events:
       - http:
           method: patch
-          path: admin/books/{booksId}
+          path: admin/books/{isbn}
           cors: true
           authorizer: Auth
           reqValidatorName: RequestBodyValidator
@@ -258,7 +258,7 @@ functions:
     events:
       - http:
           method: patch
-          path: books/{booksId}
+          path: books/{isbn}
           cors: true
           authorizer: Auth
           reqValidatorName: RequestBodyValidator
@@ -286,7 +286,7 @@ functions:
     events:
       - http:
           method: patch
-          path: admin/books/{booksId}
+          path: admin/books/{isbn}
           cors: true
           authorizer: Auth
           reqValidatorName: RequestBodyValidator
@@ -314,7 +314,7 @@ functions:
     events:
       - http:
           method: delete
-          path: books/{bookId}
+          path: books/{isbn}
           cors: true
           authorizer: Auth
     iamRoleStatementsInherit: true
@@ -331,7 +331,51 @@ functions:
       type: Linear10PercentEvery1Minute
       alias: Live
 
-  
+  GenerateUploadUrl:
+    handler: src/lambda/http/generateUploadUrl.handler
+    events:
+      - http:
+          method: post
+          path: books/{isbn}/attachment
+          cors: true
+          authorizer: Auth
+    iamRoleStatementsInherit: true
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - s3:PutObject
+          - s3:GetObject
+        Resource: arn:aws:s3:::${self:provider.environment.BOOKS_S3_BUCKET}/*
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}/index/${self:provider.environment.BOOKS_INDEX}
+    deploymentSettings:
+      type: Linear10PercentEvery1Minute
+      alias: Live
+
+  SyncWithElasticsearch:
+    environment:
+      ES_ENDPOINT: !GetAtt TodosSearch.DomainEndpoint
+    handler: src/lambda/dynamoDb/elasticSearchSync.handler
+    events:
+      - stream:
+          type: dynamodb
+          arn: !GetAtt TodoDynamoDBTable.StreamArn
+
+  SearchWithElasticsearch:
+    environment:
+      ES_ENDPOINT: !GetAtt TodosSearch.DomainEndpoint
+    handler: src/lambda/http/searchTodo.handler
+    events:
+      - stream:
+          type: dynamodb
+          arn: !GetAtt TodoDynamoDBTable.StreamArn
+
 resources:
   Resources:
     GatewayResponseDefault4XX:
@@ -436,3 +480,29 @@ resources:
               Action: 's3:GetObject'
               Resource: 'arn:aws:s3:::${self:provider.environment.BOOKS_S3_BUCKET}/*'
         Bucket: !Ref AttachmentsBucket
+
+    BooksSearch:
+      Type: AWS::Elasticsearch::Domain
+      Properties:
+        ElasticsearchVersion: '6.3'
+        DomainName: books-search-${self:provider.stage}
+        ElasticsearchClusterConfig:
+          DedicatedMasterEnabled: false
+          InstanceCount: '1'
+          ZoneAwarenessEnabled: false
+          InstanceType: t2.small.elasticsearch
+        EBSOptions:
+          EBSEnabled: true
+          Iops: 0
+          VolumeSize: 10
+          VolumeType: 'gp2'
+
+        AccessPolicies:
+          Version: '2012-10-17'
+          Statement:
+            -
+              Effect: Allow
+              Principal:
+                AWS: '*'
+              Action: 'es:*'
+              Resource: '*'
