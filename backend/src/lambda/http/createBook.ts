@@ -2,23 +2,25 @@ import 'source-map-support/register'
 
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 
-import { CreateCategoryRequest } from '../../requests/CreateCategoryRequest'
+import { CreateBookRequest } from '../../requests/CreateBookRequest'
 
 import * as middy from 'middy'
 import { cors } from 'middy/middlewares'
 import { createLogger } from '../../utils/logger'
-import { createCategory } from '../../businessLogic/categories'
+import { createBook } from '../../businessLogic/books'
 
-const logger = createLogger('createCategory')
+const logger = createLogger('createBook')
 
 export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   logger.info('Processing event: ', { event: event })
 
-  const newCategory: CreateCategoryRequest = JSON.parse(event.body)
+  const newBook: CreateBookRequest = JSON.parse(event.body)
 
-  logger.debug(`Starting creating Category`, { CreateCategoryRequest: newCategory })
-  const newItem = await createCategory(newCategory)
-  
+  logger.debug(`Starting creating Bookk.`, { CreateBookRequest:newBook })
+  const newItem = await createBook(newBook)
+  //delete userId in the return for security
+  delete newItem.lenderId
+
   logger.debug('New item was created', { item: newItem })
 
   return {

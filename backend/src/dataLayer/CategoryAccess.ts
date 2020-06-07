@@ -37,7 +37,7 @@ export class CategoryAccess {
     }).promise()
 
     const items = result.Items
-    logger.info(`List of categories`, { Todos:items })
+    logger.info(`List of categories`, { Books:items })
     return result
   }
 

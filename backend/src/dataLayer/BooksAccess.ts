@@ -32,6 +32,41 @@ export class BookAccess {
     return items as BookItem[]
   }
 
+  async getAllBooksPagination(limit: number, nextKey: Key): Promise<DocumentClient.QueryOutput> {
+    logger.info("Getting all books")
+
+    const result = await this.docClient.query({
+      TableName: this.booksTable,
+      ScanIndexForward: false,
+      Limit: limit,
+      ExclusiveStartKey: nextKey
+    }).promise()
+
+    const items = result.Items
+    logger.info(`List of books`, { Books:items })
+    return result
+  }
+
+  async getFreeBooks(limit: number, nextKey: Key): Promise<DocumentClient.QueryOutput> {
+    logger.info("Getting all books that are not borrowed")
+
+    const result = await this.docClient.query({
+      TableName: this.booksTable,
+      FilterExpression: "#borrowed = :borrowed_val",
+      ExpressionAttributeNames: {
+        "#borrowed": "borrowed",
+      },
+      ExpressionAttributeValues: { ":borrowed_val": false },
+      ScanIndexForward: false,
+      Limit: limit,
+      ExclusiveStartKey: nextKey
+    }).promise()
+
+    const items = result.Items
+    logger.info(`List of books`, { Books:items })
+    return result
+  }
+
   async getBook(isbn: string): Promise<BookItem> {
     logger.info("Get the book")
 
@@ -60,13 +95,15 @@ export class BookAccess {
 
     const result = await this.docClient.query({
       TableName: this.booksTable,
-      IndexName: this.booksIndex,
       KeyConditionExpression: "#categoryId = :categoryId_val",
+      FilterExpression: "#borrowed = :borrowed_val",
       ExpressionAttributeNames: {
+          "#borrowed": "borrowed",
           "#categoryId": "categoryId"
       },
       ExpressionAttributeValues: { 
-        ":categoryId_val": categoryId
+        ":categoryId_val": categoryId,
+        ":borrowed_val": false
       },
       ScanIndexForward: false,
       Limit: limit,
@@ -163,6 +200,41 @@ export class BookAccess {
           "#lenderId": "lenderId",
           "#borrowed": "borrowed",
           "#borrowedDate": "borrowedDate"
+        },
+        ReturnValues: "UPDATED_NEW"
+        }).promise()
+          
+    } catch(error) {
+        logger.error('Book not updated', { error:error.message} );
+        throw error
+    }
+    logger.info('Book updated!')
+  }
+
+  async updateDetails(book: BookItem): Promise<void> {
+    logger.info('Book for updating', { BookItem:book })
+    try {
+        await this.docClient.update({
+        TableName: this.booksTable,
+        Key: {
+            categoryId: book.categoryId,
+            publishedDate: book.publishDate
+        },
+        ConditionExpression: "#isbn = :isbn_val",
+        UpdateExpression: 'SET #categoryId = :categoryId_val, #title = :title_val, #author = :author_val, #publishDate = :publishDate_val',
+        ExpressionAttributeValues:{
+            ":isbn_val": book.isbn,
+            ":categoryId_val": book.categoryId,
+            ":title_val": book.title,
+            ":author_val": book.author,
+            ":publishDate_val": book.publishDate
+        },
+        ExpressionAttributeNames: {
+          "#isbn": "isbn",
+          "#categoryId": "categoryId",
+          "#title": "title",
+          "#author": "author",
+          "#publishDate": "publishDate"
         },
         ReturnValues: "UPDATED_NEW"
         }).promise()

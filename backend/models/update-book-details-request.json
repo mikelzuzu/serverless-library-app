@@ -1,15 +1,8 @@
-
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
-    "title": "create-book",
+    "title": "update-book-details",
     "type": "object",
     "properties": {
-        "isbn": {
-            "type": "string",
-            "minLength": 1,
-            "pattern": "^(?=(?:\\D*\\d){10}(?:(?:\\D*\\d){3})?$)[\\d-]+$",
-            "description": "Format validator for isbn. This does not validate the isbn, just the format"
-        },
         "categoryId": {
             "type": "string",
             "minLength": 1,
@@ -34,7 +27,6 @@
         }
     },
     "required": [
-        "isbn",
         "categoryId",
         "title",
         "author",
