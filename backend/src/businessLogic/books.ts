@@ -15,12 +15,12 @@ export async function getAllBooksPagination(limit: number, nextKey: Key): Promis
   return bookAccess.getAllBooksPagination(limit, nextKey)
 }
 
-export async function getFreeBooks(limit: number, nextKey: Key): Promise<DocumentClient.QueryOutput> {
-  return bookAccess.getAllBooksPagination(limit, nextKey)
+export async function getFreeBooks(categoryId: string, limit: number, nextKey: Key): Promise<DocumentClient.QueryOutput> {
+  return bookAccess.getFreeBooks(categoryId, limit, nextKey)
 }
 
-export async function getBooksFromLender(lenderId: string, limit: number, nextKey: Key): Promise<DocumentClient.QueryOutput> {
-  return bookAccess.getBooksFromLender(lenderId, limit, nextKey)
+export async function getBooksFromLender(categoryId: string, lenderId: string, limit: number, nextKey: Key): Promise<DocumentClient.QueryOutput> {
+  return bookAccess.getBooksFromLender(categoryId, lenderId, limit, nextKey)
 }
 
 export async function getBookFromLender(isbn: string, lenderId: string): Promise<BookItem> {
@@ -44,7 +44,7 @@ export async function createBook(
     categoryId: createBookRequest.categoryId,
     title: createBookRequest.title,
     author: createBookRequest.author,
-    publishDate: createBookRequest.publishDate,
+    publishedDate: createBookRequest.publishedDate,
     borrowed: false
     //removed borrowedDate and lenderId as still in not borrowed
     //removed attachment as it is not in S3 bucket yet. It is updated once the upload url is retrieved
@@ -70,7 +70,7 @@ export async function updateBook(
       categoryId: book.categoryId,
       title: book.title,
       author: book.author,
-      publishDate: book.publishDate,
+      publishedDate: book.publishedDate,
       borrowed: updateBookRequest.borrowed,
       borrowedDate: updateBookRequest.borrowedDate
     })
@@ -82,13 +82,15 @@ export async function updateBookDetails(
   updateBookDetailsRequest: UpdateBookDetailsRequest,
 ): Promise<void> {
 
+  const book = await bookAccess.getBook(isbn)
+
   return await bookAccess.updateDetails({
     isbn: isbn,
     lenderId: "",
-    categoryId: updateBookDetailsRequest.categoryId,
+    categoryId: book.categoryId,
     title: updateBookDetailsRequest.title,
     author: updateBookDetailsRequest.author,
-    publishDate: updateBookDetailsRequest.publishDate,
+    publishedDate: book.publishedDate,
     borrowed: false,
     borrowedDate: ""
   })
@@ -107,7 +109,7 @@ export async function updateBookToBorrow(
     categoryId: book.categoryId,
     title: book.title,
     author: book.author,
-    publishDate: book.publishDate,
+    publishedDate: book.publishedDate,
     borrowed: true,
     borrowedDate: new Date().toISOString()
   })
@@ -120,13 +122,13 @@ export async function updateBookToReturn(
 
   const book = await bookAccess.getBook(isbn)
 
-  return await bookAccess.updateBookToBorrow({
+  return await bookAccess.updateBookToReturn({
     isbn: isbn,
     lenderId: lenderId,
     categoryId: book.categoryId,
     title: book.title,
     author: book.author,
-    publishDate: book.publishDate,
+    publishedDate: book.publishedDate,
     borrowed: false,
     borrowedDate: new Date().toISOString()
   })
@@ -139,7 +141,7 @@ export async function updateAttachment(
   //need to find category of the book
   const book = await bookAccess.getBook(isbn)
 
-  return await bookAccess.updateAttachment(isbn, book.categoryId, book.publishDate, attachmentUrl)
+  return await bookAccess.updateAttachment(isbn, book.categoryId, book.publishedDate, attachmentUrl)
 }
 
 export async function deleteBook(
@@ -149,7 +151,7 @@ export async function deleteBook(
   if (book.borrowed) {
     //we cannot delete a book that is borrowed
   } else {
-    return await bookAccess.deleteBook(isbn, book.categoryId, book.publishDate)
+    return await bookAccess.deleteBook(isbn, book.categoryId, book.publishedDate)
   }
 
 }

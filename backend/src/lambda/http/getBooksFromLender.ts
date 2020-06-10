@@ -9,8 +9,9 @@ import { cors } from 'middy/middlewares'
 import { parseLimitParameter, parseNextKeyParameter, encodeNextKey } from '../../utils/QueryParameter'
 import HttpException from '../../utils/HttpException'
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
+import { categoryExists } from '../../businessLogic/categories'
 
-const logger = createLogger('getBooks')
+const logger = createLogger('getBooksFromLender')
 
 //This handler is for the case when the lender is logged in a website where he/she can check which books are borrowed by themselves
 export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
@@ -23,7 +24,21 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
     // Check if the user is using pagination options. If Limit is not specify, I will default to 5.
     const limit = parseLimitParameter(event) || 5
     const nextKey = parseNextKeyParameter(event)
-    const result: DocumentClient.QueryOutput = await getBooksFromLender(lenderId, limit, nextKey)
+    const categoryId = event.pathParameters.categoryId
+    logger.debug(`Retrieving all Books from category: ${categoryId} borrowed by ${lenderId}.`)
+
+    const validCategoryId = await categoryExists(categoryId)
+
+    if (!validCategoryId) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({
+          error: 'Category does not exist'
+        })
+      }
+    }
+
+    const result: DocumentClient.QueryOutput = await getBooksFromLender(categoryId, lenderId, limit, nextKey)
     const items = result.Items
     //delete lenderId in the book list
     items.forEach(book => delete book.lenderId)

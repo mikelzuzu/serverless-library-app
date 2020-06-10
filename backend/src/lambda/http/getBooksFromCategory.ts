@@ -10,14 +10,14 @@ import HttpException from '../../utils/HttpException'
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import { categoryExists } from '../../businessLogic/categories'
 
-const logger = createLogger('getBooks')
+const logger = createLogger('getBooksFromCategory')
 
 export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
 
   logger.info('Processing event: ', { event: event })
 
   const categoryId = event.pathParameters.categoryId
-  logger.debug(`Retrieving all Books from category: ${categoryId}.`)
+  logger.info(`Retrieving all Books from category: ${categoryId}.`)
 
   const validCategoryId = await categoryExists(categoryId)
 

@@ -17,7 +17,7 @@ export class BookAccess {
   constructor(
     private readonly docClient: DocumentClient = createDynamoDBClient(),
     private readonly booksTable = process.env.BOOKS_TABLE,
-    private readonly booksIndex = process.env.BOOKS_ISBN_INDEX) {
+    private readonly booksIndex = process.env.BOOKS_ID_INDEX) {
   }
 
   async getAllBooks(): Promise<BookItem[]> {
@@ -35,9 +35,8 @@ export class BookAccess {
   async getAllBooksPagination(limit: number, nextKey: Key): Promise<DocumentClient.QueryOutput> {
     logger.info("Getting all books")
 
-    const result = await this.docClient.query({
+    const result = await this.docClient.scan({
       TableName: this.booksTable,
-      ScanIndexForward: false,
       Limit: limit,
       ExclusiveStartKey: nextKey
     }).promise()
@@ -47,16 +46,21 @@ export class BookAccess {
     return result
   }
 
-  async getFreeBooks(limit: number, nextKey: Key): Promise<DocumentClient.QueryOutput> {
+  async getFreeBooks(categoryId, limit: number, nextKey: Key): Promise<DocumentClient.QueryOutput> {
     logger.info("Getting all books that are not borrowed")
 
     const result = await this.docClient.query({
       TableName: this.booksTable,
+      KeyConditionExpression: "#categoryId = :categoryId",
       FilterExpression: "#borrowed = :borrowed_val",
       ExpressionAttributeNames: {
         "#borrowed": "borrowed",
+        "#categoryId": "categoryId"
       },
-      ExpressionAttributeValues: { ":borrowed_val": false },
+      ExpressionAttributeValues: { 
+        ":borrowed_val": false,
+        ":categoryId": categoryId
+      },
       ScanIndexForward: false,
       Limit: limit,
       ExclusiveStartKey: nextKey
@@ -68,7 +72,7 @@ export class BookAccess {
   }
 
   async getBook(isbn: string): Promise<BookItem> {
-    logger.info("Get the book")
+    logger.info(`Get the book with isbn ${isbn}`)
 
     const result = await this.docClient.query({
         TableName : this.booksTable,
@@ -81,7 +85,7 @@ export class BookAccess {
 
     if (result.Count !== 0) {
         const item =result.Items[0]
-        logger.info("List of Books", { Book:item })
+        logger.info("Books found", { Book:item })
         return item as BookItem
     } else {
         logger.error(`Book not found with id ${isbn}`)
@@ -96,14 +100,11 @@ export class BookAccess {
     const result = await this.docClient.query({
       TableName: this.booksTable,
       KeyConditionExpression: "#categoryId = :categoryId_val",
-      FilterExpression: "#borrowed = :borrowed_val",
       ExpressionAttributeNames: {
-          "#borrowed": "borrowed",
           "#categoryId": "categoryId"
       },
       ExpressionAttributeValues: { 
-        ":categoryId_val": categoryId,
-        ":borrowed_val": false
+        ":categoryId_val": categoryId
       },
       ScanIndexForward: false,
       Limit: limit,
@@ -115,19 +116,22 @@ export class BookAccess {
     return result
   }
 
-  async getBooksFromLender(lenderId: string, limit: number, nextKey: Key): Promise<DocumentClient.QueryOutput> {
+  async getBooksFromLender(categoryId: string, lenderId: string, limit: number, nextKey: Key): Promise<DocumentClient.QueryOutput> {
     logger.info(`Getting all books from lender: ${lenderId}`)
 
     const result = await this.docClient.query({
       TableName: this.booksTable,
-      IndexName: this.booksIndex,
-      KeyConditionExpression: "#lenderId = :lenderId_val and #borrowed = true",
+      KeyConditionExpression: "#categoryId = :categoryId",
+      FilterExpression: "#lenderId = :lenderId_val and #borrowed = :borrowed_val",
       ExpressionAttributeNames: {
           "#lenderId": "lenderId",
-          "#borrowed": "borrowed"
+          "#borrowed": "borrowed",
+          "#categoryId": "categoryId"
       },
       ExpressionAttributeValues: { 
-        ":lenderId_val": lenderId
+        ":lenderId_val": lenderId,
+        ":categoryId": categoryId,
+        ":borrowed_val": true
       },
       ScanIndexForward: false,
       Limit: limit,
@@ -145,15 +149,17 @@ export class BookAccess {
     const result = await this.docClient.query({
       TableName: this.booksTable,
       IndexName: this.booksIndex,
-      KeyConditionExpression: "#isbn = :isbn_val and #lenderId = :lenderId_val and #borrowed = true",
+      KeyConditionExpression: "#isbn = :isbn",
+      FilterExpression: "#lenderId = :lenderId_val and #borrowed = :borrowed_val",
       ExpressionAttributeNames: {
           "#lenderId": "lenderId",
           "#isbn": "isbn",
           "#borrowed": "borrowed"
       },
       ExpressionAttributeValues: { 
-        ":isbn_val": isbn,
-        ":lenderId_val": lenderId
+        ":isbn": isbn,
+        ":lenderId_val": lenderId,
+        ":borrowed_val": true
       },
       ScanIndexForward: false,
       Limit: 1
@@ -185,12 +191,12 @@ export class BookAccess {
         TableName: this.booksTable,
         Key: {
             categoryId: book.categoryId,
-            publishedDate: book.publishDate
+            publishedDate: book.publishedDate
         },
-        ConditionExpression: "#isbn = :isbn_val",
+        ConditionExpression: "#isbn = :isbn",
         UpdateExpression: 'SET #lenderId = :lenderId_val, #borrowed = :borrowed_val, #borrowedDate = :borrowedDate_val',
         ExpressionAttributeValues:{
-            ":isbn_val": book.isbn,
+            ":isbn": book.isbn,
             ":lenderId_val": book.lenderId,
             ":borrowed_val": book.borrowed,
             ":borrowedDate_val": book.borrowedDate
@@ -218,23 +224,19 @@ export class BookAccess {
         TableName: this.booksTable,
         Key: {
             categoryId: book.categoryId,
-            publishedDate: book.publishDate
+            publishedDate: book.publishedDate
         },
-        ConditionExpression: "#isbn = :isbn_val",
-        UpdateExpression: 'SET #categoryId = :categoryId_val, #title = :title_val, #author = :author_val, #publishDate = :publishDate_val',
+        ConditionExpression: "#isbn = :isbn",
+        UpdateExpression: 'SET #title = :title_val, #author = :author_val',
         ExpressionAttributeValues:{
-            ":isbn_val": book.isbn,
-            ":categoryId_val": book.categoryId,
+            ":isbn": book.isbn,
             ":title_val": book.title,
-            ":author_val": book.author,
-            ":publishDate_val": book.publishDate
+            ":author_val": book.author
         },
         ExpressionAttributeNames: {
           "#isbn": "isbn",
-          "#categoryId": "categoryId",
           "#title": "title",
-          "#author": "author",
-          "#publishDate": "publishDate"
+          "#author": "author"
         },
         ReturnValues: "UPDATED_NEW"
         }).promise()
@@ -253,14 +255,16 @@ export class BookAccess {
         TableName: this.booksTable,
         Key: {
             categoryId: book.categoryId,
-            publishedDate: book.publishDate
+            publishedDate: book.publishedDate
         },
-        ConditionExpression: "#isbn = :isbn_val and #borrowed = false",
-        UpdateExpression: 'SET #lenderId = :lenderId_val, #borrowed = true, #borrowedDate = :borrowedDate_val',
+        ConditionExpression: "#isbn = :isbn and #borrowed = :beforeBorrow",
+        UpdateExpression: 'SET #lenderId = :lenderId_val, #borrowed = :afterBorrow, #borrowedDate = :borrowedDate_val',
         ExpressionAttributeValues:{
-            ":isbn_val": book.isbn,
+            ":isbn": book.isbn,
             ":lenderId_val": book.lenderId,
-            ":borrowedDate_val": book.borrowedDate
+            ":borrowedDate_val": book.borrowedDate,
+            ":beforeBorrow": false,
+            ":afterBorrow": true
         },
         ExpressionAttributeNames: {
           "#isbn": "isbn",
@@ -285,13 +289,15 @@ export class BookAccess {
         TableName: this.booksTable,
         Key: {
             categoryId: book.categoryId,
-            publishedDate: book.publishDate
+            publishedDate: book.publishedDate
         },
-        ConditionExpression: "#isbn = :isbn_val and #borrowed = true and #lenderId = :lenderId_val",
-        UpdateExpression: 'SET #borrowed = false REMOVE #borrowedDate',
+        ConditionExpression: "#isbn = :isbn and #borrowed = :beforeReturn and #lenderId = :lenderId",
+        UpdateExpression: 'SET #borrowed = :afterReturn REMOVE #borrowedDate, #lenderId',
         ExpressionAttributeValues:{
-            ":isbn_val": book.isbn,
-            ":lenderId_val": book.lenderId,
+            ":isbn": book.isbn,
+            ":lenderId": book.lenderId,
+            ":beforeReturn": true,
+            ":afterReturn": false
         },
         ExpressionAttributeNames: {
           "#isbn": "isbn",
@@ -318,10 +324,10 @@ export class BookAccess {
             categoryId,
             publishedDate
         },
-        ConditionExpression: "#isbn = :isbn_val",
+        ConditionExpression: "#isbn = :isbn",
         UpdateExpression: 'SET #attachmentUrl = :attachmentUrl_val',
         ExpressionAttributeValues:{
-            ":isbn_val": isbn,
+            ":isbn": isbn,
             ":attachmentUrl_val": attachmentUrl,
 
         },
@@ -348,7 +354,15 @@ export class BookAccess {
             categoryId,
             publishedDate
         },
-        ConditionExpression:"borrowed = false and isbn = :isbn_val"
+        ConditionExpression:"#borrowed = :borrowed_val and #isbn = :isbn_val",
+        ExpressionAttributeValues:{
+          ":isbn_val": isbn,
+          ":borrowed_val": false
+      },
+      ExpressionAttributeNames: {
+        "#borrowed": "borrowed",
+        "#isbn": "isbn"
+      },
         }).promise()
     } catch(error) {
         logger.error('Book not deleted', { error:error.message});

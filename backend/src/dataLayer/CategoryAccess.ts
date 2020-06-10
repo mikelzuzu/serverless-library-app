@@ -29,9 +29,8 @@ export class CategoryAccess {
   async getAllCategoriesPagination(limit: number, nextKey: Key): Promise<DocumentClient.QueryOutput> {
     logger.info('Getting all categories')
 
-    const result = await this.docClient.query({
+    const result = await this.docClient.scan({
       TableName: this.categoriesTable,
-      ScanIndexForward: false,
       Limit: limit,
       ExclusiveStartKey: nextKey
     }).promise()
@@ -52,26 +51,26 @@ export class CategoryAccess {
   }
 
   async categoryExists(categoryId: string): Promise<Boolean> {
-    const result = await this.docClient.get({
+    logger.info(`Looking for category with id ${categoryId}`)
+    const result = await this.docClient.query({
       TableName: this.categoriesTable,
-      Key: {
-        id: categoryId
-      }
+      KeyConditionExpression: '#id = :categoryId',
+      ExpressionAttributeNames: {
+        '#id': "id"
+      },
+      ExpressionAttributeValues: { 
+        ':categoryId': categoryId
+      },
+      ScanIndexForward: false,
+      Limit: 1
     }).promise()
-
-    return !!result.Item
+    let exist = false
+    if (result.Items.length > 0) {
+      exist = true
+    }
+    return exist
   }
 
-  async getCategory(categoryId: string): Promise<CategoryItem> {
-    const result = await this.docClient.get({
-      TableName: this.categoriesTable,
-      Key: {
-        id: categoryId
-      }
-    }).promise()
-
-    return result.Item as CategoryItem
-  }
 }
 
 function createDynamoDBClient() {

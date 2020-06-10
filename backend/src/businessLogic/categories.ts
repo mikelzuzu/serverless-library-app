@@ -29,10 +29,6 @@ export async function createCategory(
   })
 }
 
-export async function getCategory(categoryId: string): Promise<CategoryItem> {
-    return categoryAccess.getCategory(categoryId)
-}
-
 export async function categoryExists(categoryId: string): Promise<Boolean> {
     return categoryAccess.categoryExists(categoryId)
 }

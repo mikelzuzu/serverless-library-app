@@ -4,7 +4,7 @@ export interface BookItem {
     lenderId?: string
     title: string
     author: string
-    publishDate: string
+    publishedDate: string
     borrowed: boolean
     borrowedDate?:string
     attachmentUrl?: string
