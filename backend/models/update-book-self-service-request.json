@@ -1,0 +1,14 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "update-book-self-service",
+    "type": "object",
+    "properties": {
+        "borrowed": {
+            "type": "boolean"
+        }
+    },
+    "required": [
+       "borrowed"
+    ],
+    "additionalProperties": false
+}

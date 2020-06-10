@@ -1,0 +1,39 @@
+{
+  "name": "serverless-library-app",
+  "version": "1.0.0",
+  "description": "Serverless Library app",
+  "dependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/http-errors": "^1.6.1",
+    "aws-xray-sdk": "^2.5.0",
+    "axios": "^0.19.2",
+    "elasticsearch": "^16.7.1",
+    "http-aws-es": "^6.0.0",
+    "http-errors": "^1.7.2",
+    "jsonwebtoken": "^8.5.1",
+    "middy": "^0.27.0",
+    "source-map-support": "^0.5.11",
+    "uuid": "^3.3.2",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.17",
+    "@types/elasticsearch": "^5.0.36",
+    "@types/jsonwebtoken": "^8.3.2",
+    "@types/node": "^12.12.6",
+    "aws-sdk": "^2.669.0",
+    "serverless-aws-documentation": "^1.1.0",
+    "serverless-dynamodb-local": "^0.2.39",
+    "serverless-iam-roles-per-function": "^2.0.2",
+    "serverless-offline": "^6.1.5",
+    "serverless-plugin-canary-deployments": "^0.4.8",
+    "serverless-reqvalidator-plugin": "^1.0.3",
+    "serverless-s3-local": "^0.6.1",
+    "serverless-webpack": "^5.2.0",
+    "ts-loader": "^5.3.3",
+    "typescript": "^3.4.1",
+    "webpack": "^4.29.0"
+  },
+  "author": "Mikel Zuzuarregui",
+  "license": "MIT"
+}
