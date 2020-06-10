@@ -1,5 +1,5 @@
 service:
-  name: serverless-librarian-app
+  name: serverless-librarian2-app
 
 plugins:
   - serverless-webpack
@@ -11,8 +11,8 @@ plugins:
   - serverless-s3-local
   - serverless-offline
 
-# package:
-#   individually: true
+package:
+  individually: true
 
 custom:
   documentation:
@@ -49,7 +49,7 @@ custom:
       port: 8000
       inMemory: true
       migrate: true
-      noStart: true
+      #noStart: true
     stages:
       - dev
 
@@ -80,6 +80,7 @@ provider:
     #AWS_XRAY_CONTEXT_MISSING: LOG_ERROR
     #DISABLE_XRAY_TRACING: 1
     #_X_AMZN_TRACE_ID: 0
+    
   
   iamRoleStatements:
     - Effect: "Allow" # xray permissions (required)
@@ -432,14 +433,14 @@ resources:
         AttributeDefinitions:
           - AttributeName: isbn
             AttributeType: S
-          - AttributeName: publishedDate
+          - AttributeName: createdAt
             AttributeType: S
           - AttributeName: categoryId
             AttributeType: S
         KeySchema:
           - AttributeName: categoryId
             KeyType: HASH
-          - AttributeName: publishedDate
+          - AttributeName: createdAt
             KeyType: RANGE
         BillingMode: "PROVISIONED"
         ProvisionedThroughput:
