@@ -1,5 +1,5 @@
 service:
-  name: serverless-library-app
+  name: serverless-librarian-app
 
 plugins:
   - serverless-webpack
@@ -11,8 +11,8 @@ plugins:
   - serverless-s3-local
   - serverless-offline
 
-package:
-  individually: true
+# package:
+#   individually: true
 
 custom:
   documentation:
@@ -28,6 +28,15 @@ custom:
       - name: UpdateBookRequest
         contentType: application/json
         schema: ${file(models/update-book-request.json)}
+      - name: CreateCategoryRequest
+        contentType: application/json
+        schema: ${file(models/create-category-request.json)}
+      - name: UpdateBookDetailsRequest
+        contentType: application/json
+        schema: ${file(models/update-book-details-request.json)}
+      - name: UpdateBookSelfServiceRequest
+        contentType: application/json
+        schema: ${file(models/update-book-self-service-request.json)}
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
@@ -40,13 +49,13 @@ custom:
       port: 8000
       inMemory: true
       migrate: true
-      #noStart: true
+      noStart: true
     stages:
       - dev
 
-  s3:
-    port: 8001
-    directory: /tmp
+  # s3:
+  #   port: 8001
+  #   directory: /tmp
 
 provider:
   name: aws
@@ -62,11 +71,15 @@ provider:
     apiGateway: true
 
   environment:
+    CATEGORIES_TABLE: Categories-${self:provider.stage}
     BOOKS_TABLE: Books-${self:provider.stage}
-    BOOKS_INDEX: LenderIdIndex
+    BOOKS_ID_INDEX: IsbnIndex
     BOOKS_S3_BUCKET: serverless-books-attachements-zuzu-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
     JWKS_URL: https://dev-zuzu.eu.auth0.com/.well-known/jwks.json
+    #AWS_XRAY_CONTEXT_MISSING: LOG_ERROR
+    #DISABLE_XRAY_TRACING: 1
+    #_X_AMZN_TRACE_ID: 0
   
   iamRoleStatements:
     - Effect: "Allow" # xray permissions (required)
@@ -83,7 +96,293 @@ provider:
 
 functions:
 
-  
+  Auth:
+    handler: src/lambda/auth/auth0Authorizer.handler
+
+  GetCategories:
+    handler: src/lambda/http/getCategories.handler
+    events:
+      - http:
+          method: get
+          path: categories
+          cors: true
+          #authorizer: Auth
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Scan
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CATEGORIES_TABLE}
+    iamRoleStatementsInherit: true
+    deploymentSettings:
+      type: Linear10PercentEvery1Minute
+      alias: Live
+
+  CreateCategory:
+    handler: src/lambda/http/createCategory.handler
+    events:
+      - http:
+          method: post
+          path: categories
+          cors: true
+          authorizer: Auth
+          reqValidatorName: RequestBodyValidator
+          documentation:
+            summary: Create a new category
+            description: Create a new category
+            requestModels:
+              'application/json': CreateCategoryRequest
+    iamRoleStatementsInherit: true
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:PutItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CATEGORIES_TABLE}
+    deploymentSettings:
+      type: Linear10PercentEvery1Minute
+      alias: Live
+
+  GetAllBooks:
+    handler: src/lambda/http/getBooks.handler
+    events:
+      - http:
+          method: get
+          path: admin/books
+          cors: true
+          authorizer: Auth
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Scan
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}
+    iamRoleStatementsInherit: true
+    deploymentSettings:
+      type: Linear10PercentEvery1Minute
+      alias: Live
+
+  GetBooks:
+    handler: src/lambda/http/getFreeBooks.handler
+    events:
+      - http:
+          method: get
+          path: categories/{categoryId}/booksFree
+          cors: true
+          authorizer: Auth
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CATEGORIES_TABLE}
+    iamRoleStatementsInherit: true
+    deploymentSettings:
+      type: Linear10PercentEvery1Minute
+      alias: Live
+
+  GetBooksFromCategory:
+    handler: src/lambda/http/getBooksFromCategory.handler
+    events:
+      - http:
+          method: get
+          path: categories/{categoryId}/books
+          cors: true
+          authorizer: Auth
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CATEGORIES_TABLE}
+    iamRoleStatementsInherit: true
+    deploymentSettings:
+      type: Linear10PercentEvery1Minute
+      alias: Live
+
+  GetBooksFromLender:
+    handler: src/lambda/http/getBooksFromLender.handler
+    events:
+      - http:
+          method: get
+          path: categories/{categoryId}/books/borrowed
+          cors: true
+          authorizer: Auth
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CATEGORIES_TABLE}
+    iamRoleStatementsInherit: true
+    deploymentSettings:
+      type: Linear10PercentEvery1Minute
+      alias: Live
+
+  CreateBook:
+    handler: src/lambda/http/createBook.handler
+    events:
+      - http:
+          method: post
+          path: books
+          cors: true
+          authorizer: Auth
+          reqValidatorName: RequestBodyValidator
+          documentation:
+            summary: Create a new book
+            description: Create a new book
+            requestModels:
+              'application/json': CreateBookRequest
+    iamRoleStatementsInherit: true
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:PutItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}
+    deploymentSettings:
+      type: Linear10PercentEvery1Minute
+      alias: Live
+
+  UpdateBook:
+    handler: src/lambda/http/updateBook.handler
+    events:
+      - http:
+          method: patch
+          path: admin/books/{isbn}/status
+          cors: true
+          authorizer: Auth
+          reqValidatorName: RequestBodyValidator
+          documentation:
+            summary: Update a book
+            description: Update a book
+            requestModels:
+              'application/json': UpdateBookRequest
+    iamRoleStatementsInherit: true
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}/index/${self:provider.environment.BOOKS_ID_INDEX}
+    deploymentSettings:
+      type: Linear10PercentEvery1Minute
+      alias: Live
+
+  UpdateBookSelfService:
+    handler: src/lambda/http/updateBookSelfService.handler
+    events:
+      - http:
+          method: patch
+          path: books/{isbn}
+          cors: true
+          authorizer: Auth
+          reqValidatorName: RequestBodyValidator
+          documentation:
+            summary: Update a book status
+            description: Update a book status
+            requestModels:
+              'application/json': UpdateBookSelfServiceRequest
+    iamRoleStatementsInherit: true
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}/index/${self:provider.environment.BOOKS_ID_INDEX}
+    deploymentSettings:
+      type: Linear10PercentEvery1Minute
+      alias: Live
+
+  UpdateBookDetails:
+    handler: src/lambda/http/updateBookDetails.handler
+    events:
+      - http:
+          method: patch
+          path: admin/books/{isbn}/details
+          cors: true
+          authorizer: Auth
+          reqValidatorName: RequestBodyValidator
+          documentation:
+            summary: Update a book details
+            description: Update a book details
+            requestModels:
+              'application/json': UpdateBookDetailsRequest
+    iamRoleStatementsInherit: true
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}/index/${self:provider.environment.BOOKS_ID_INDEX}
+    deploymentSettings:
+      type: Linear10PercentEvery1Minute
+      alias: Live
+
+  DeleteBook:
+    handler: src/lambda/http/deleteBook.handler
+    events:
+      - http:
+          method: delete
+          path: books/{isbn}
+          cors: true
+          authorizer: Auth
+    iamRoleStatementsInherit: true
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:DeleteItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}/index/${self:provider.environment.BOOKS_ID_INDEX}
+    deploymentSettings:
+      type: Linear10PercentEvery1Minute
+      alias: Live
+
+  GenerateUploadUrl:
+    handler: src/lambda/http/generateUploadUrl.handler
+    events:
+      - http:
+          method: post
+          path: books/{isbn}/attachment
+          cors: true
+          authorizer: Auth
+    iamRoleStatementsInherit: true
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - s3:PutObject
+          - s3:GetObject
+        Resource: arn:aws:s3:::${self:provider.environment.BOOKS_S3_BUCKET}/*
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}/index/${self:provider.environment.BOOKS_ID_INDEX}
+    deploymentSettings:
+      type: Linear10PercentEvery1Minute
+      alias: Live
+
 resources:
   Resources:
     GatewayResponseDefault4XX:
@@ -106,20 +405,41 @@ resources:
         ValidateRequestBody: true
         ValidateRequestParameters: false
 
-    BookDynamoDBTable:
+    CategoriesDynamoDBTable:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: timestamp
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+          - AttributeName: timestamp
+            KeyType: RANGE
+        BillingMode: "PROVISIONED"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        StreamSpecification:
+          StreamViewType: NEW_IMAGE
+        TableName: ${self:provider.environment.CATEGORIES_TABLE}
+        
+    BooksDynamoDBTable:
       Type: "AWS::DynamoDB::Table"
       Properties:
         AttributeDefinitions:
           - AttributeName: isbn
             AttributeType: S
-          - AttributeName: publishDate
+          - AttributeName: publishedDate
             AttributeType: S
-          - AttributeName: lenderId
+          - AttributeName: categoryId
             AttributeType: S
         KeySchema:
-          - AttributeName: isbn
+          - AttributeName: categoryId
             KeyType: HASH
-          - AttributeName: publishDate
+          - AttributeName: publishedDate
             KeyType: RANGE
         BillingMode: "PROVISIONED"
         ProvisionedThroughput:
@@ -129,15 +449,13 @@ resources:
           StreamViewType: NEW_IMAGE
         TableName: ${self:provider.environment.BOOKS_TABLE}
         GlobalSecondaryIndexes:
-          - IndexName: ${self:provider.environment.BOOKS_INDEX}
+          - IndexName: ${self:provider.environment.BOOKS_ID_INDEX}
             ProvisionedThroughput:
               ReadCapacityUnits: 1
               WriteCapacityUnits: 1
             KeySchema:
             - AttributeName: isbn
               KeyType: HASH
-            - AttributeName: lenderId
-              KeyType: RANGE
             Projection:
               ProjectionType: ALL
 
@@ -174,28 +492,28 @@ resources:
               Resource: 'arn:aws:s3:::${self:provider.environment.BOOKS_S3_BUCKET}/*'
         Bucket: !Ref AttachmentsBucket
 
-    BooksSearch:
-      Type: AWS::Elasticsearch::Domain
-      Properties:
-        ElasticsearchVersion: '6.3'
-        DomainName: books-search-${self:provider.stage}
-        ElasticsearchClusterConfig:
-          DedicatedMasterEnabled: false
-          InstanceCount: '1'
-          ZoneAwarenessEnabled: false
-          InstanceType: t2.small.elasticsearch
-        EBSOptions:
-          EBSEnabled: true
-          Iops: 0
-          VolumeSize: 10
-          VolumeType: 'gp2'
+    # BooksSearch:
+    #   Type: AWS::Elasticsearch::Domain
+    #   Properties:
+    #     ElasticsearchVersion: '6.3'
+    #     DomainName: books-search-${self:provider.stage}
+    #     ElasticsearchClusterConfig:
+    #       DedicatedMasterEnabled: false
+    #       InstanceCount: '1'
+    #       ZoneAwarenessEnabled: false
+    #       InstanceType: t2.small.elasticsearch
+    #     EBSOptions:
+    #       EBSEnabled: true
+    #       Iops: 0
+    #       VolumeSize: 10
+    #       VolumeType: 'gp2'
 
-        AccessPolicies:
-          Version: '2012-10-17'
-          Statement:
-            -
-              Effect: Allow
-              Principal:
-                AWS: '*'
-              Action: 'es:*'
-              Resource: '*'
+    #     AccessPolicies:
+    #       Version: '2012-10-17'
+    #       Statement:
+    #         -
+    #           Effect: Allow
+    #           Principal:
+    #             AWS: '*'
+    #           Action: 'es:*'
+    #           Resource: '*'
