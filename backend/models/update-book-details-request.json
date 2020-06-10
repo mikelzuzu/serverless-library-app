@@ -1,0 +1,24 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "update-book-details",
+    "type": "object",
+    "properties": {
+        "title": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[A-Za-z][a-zA-Z0-9\\_\\-\\s]+$",
+            "description": "Name of the title has to start with letter and can be followed by more letters, numbers, whitespaces, hyphen or underscore"
+        },
+        "author": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[A-Za-z][a-zA-Z0-9\\_\\-\\s]+$",
+            "description": "Name of the author has to start with letter and can be followed by more letters, numbers, whitespaces, hyphen or underscore"
+        }
+    },
+    "required": [
+        "title",
+        "author"
+    ],
+    "additionalProperties": false
+}
