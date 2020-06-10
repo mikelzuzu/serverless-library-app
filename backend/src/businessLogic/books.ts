@@ -45,7 +45,8 @@ export async function createBook(
     title: createBookRequest.title,
     author: createBookRequest.author,
     publishedDate: createBookRequest.publishedDate,
-    borrowed: false
+    borrowed: false,
+    createdAt: new Date().toISOString()
     //removed borrowedDate and lenderId as still in not borrowed
     //removed attachment as it is not in S3 bucket yet. It is updated once the upload url is retrieved
     //attachmentUrl: `https://${bucketName}.s3.amazonaws.com/${itemId}`
@@ -72,7 +73,8 @@ export async function updateBook(
       author: book.author,
       publishedDate: book.publishedDate,
       borrowed: updateBookRequest.borrowed,
-      borrowedDate: updateBookRequest.borrowedDate
+      borrowedDate: updateBookRequest.borrowedDate,
+      createdAt: book.createdAt
     })
   }
 }
@@ -90,9 +92,10 @@ export async function updateBookDetails(
     categoryId: book.categoryId,
     title: updateBookDetailsRequest.title,
     author: updateBookDetailsRequest.author,
-    publishedDate: book.publishedDate,
+    publishedDate: updateBookDetailsRequest.publishedDate,
     borrowed: false,
-    borrowedDate: ""
+    borrowedDate: "",
+    createdAt: book.createdAt
   })
 }
 
@@ -111,7 +114,8 @@ export async function updateBookToBorrow(
     author: book.author,
     publishedDate: book.publishedDate,
     borrowed: true,
-    borrowedDate: new Date().toISOString()
+    borrowedDate: new Date().toISOString(),
+    createdAt: book.createdAt
   })
 }
 
@@ -130,7 +134,8 @@ export async function updateBookToReturn(
     author: book.author,
     publishedDate: book.publishedDate,
     borrowed: false,
-    borrowedDate: new Date().toISOString()
+    borrowedDate: new Date().toISOString(),
+    createdAt: book.createdAt
   })
 }
 
@@ -141,7 +146,7 @@ export async function updateAttachment(
   //need to find category of the book
   const book = await bookAccess.getBook(isbn)
 
-  return await bookAccess.updateAttachment(isbn, book.categoryId, book.publishedDate, attachmentUrl)
+  return await bookAccess.updateAttachment(isbn, book.categoryId, book.createdAt, attachmentUrl)
 }
 
 export async function deleteBook(
@@ -151,7 +156,7 @@ export async function deleteBook(
   if (book.borrowed) {
     //we cannot delete a book that is borrowed
   } else {
-    return await bookAccess.deleteBook(isbn, book.categoryId, book.publishedDate)
+    return await bookAccess.deleteBook(isbn, book.categoryId, book.createdAt)
   }
 
 }
