@@ -88,7 +88,7 @@ export class BookAccess {
         logger.info("Books found", { Book:item })
         return item as BookItem
     } else {
-        logger.error(`Book not found with id ${isbn}`)
+        logger.error(`Book not found with isbn ${isbn}`)
         throw new BookNotFoundException(isbn)
     }
   }
@@ -167,7 +167,7 @@ export class BookAccess {
 
     const item = result.Items[0]
     if (item === undefined) {
-      logger.error(`Book not found with id ${isbn}`)
+      logger.error(`Book not found with isbn ${isbn}`)
       throw new BookNotFoundException(isbn)
     }
     logger.info(`Book for the lender ${lenderId}`, { Book:item })

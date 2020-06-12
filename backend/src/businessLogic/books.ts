@@ -4,8 +4,11 @@ import { CreateBookRequest } from '../requests/CreateBookRequest'
 import { UpdateBookRequest } from '../requests/UpdateBookRequest'
 import { UpdateBookDetailsRequest } from '../requests/UpdateBookDetailsRequest'
 import { DocumentClient, Key } from 'aws-sdk/clients/dynamodb'
+import BookStatusException from '../utils/BookStatusException';
+import { createLogger } from '../utils/logger';
 
 const bookAccess = new BookAccess()
+const logger = createLogger('Books')
 
 export async function getAllBooks(): Promise<BookItem[]> {
   return bookAccess.getAllBooks()
@@ -62,8 +65,12 @@ export async function updateBook(
 
   if (updateBookRequest.borrowed && book.borrowed) {
     //We can not borrow a book that is already borrowed
+    logger.error(`Book with isbn ${isbn} is already borrowed`)
+    throw new BookStatusException(isbn, "borrowed")
   } else if (!updateBookRequest.borrowed && !book.borrowed) {
     //We cannot return a book that it is not borrowed
+    logger.error(`Book with isbn ${isbn} is already returned`)
+    throw new BookStatusException(isbn, "returned")
   } else {
     return await bookAccess.updateBook({
       isbn: isbn,
@@ -106,6 +113,11 @@ export async function updateBookToBorrow(
 
   const book = await bookAccess.getBook(isbn)
 
+  if (book.borrowed) {
+    logger.error(`Book with isbn ${isbn} is already borrowed`)
+    throw new BookStatusException(isbn, "borrowed")
+  }
+
   return await bookAccess.updateBookToBorrow({
     isbn: isbn,
     lenderId: lenderId,
@@ -125,6 +137,11 @@ export async function updateBookToReturn(
 ): Promise<void> {
 
   const book = await bookAccess.getBook(isbn)
+
+  if (!book.borrowed) {
+    logger.error(`Book with isbn ${isbn} is already returned`)
+    throw new BookStatusException(isbn, "returned")
+  }
 
   return await bookAccess.updateBookToReturn({
     isbn: isbn,
