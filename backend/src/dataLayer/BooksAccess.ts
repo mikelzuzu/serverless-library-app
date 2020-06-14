@@ -88,7 +88,7 @@ export class BookAccess {
         logger.info("Books found", { Book:item })
         return item as BookItem
     } else {
-        logger.error(`Book not found with id ${isbn}`)
+        logger.error(`Book not found with isbn ${isbn}`)
         throw new BookNotFoundException(isbn)
     }
   }
@@ -167,7 +167,7 @@ export class BookAccess {
 
     const item = result.Items[0]
     if (item === undefined) {
-      logger.error(`Book not found with id ${isbn}`)
+      logger.error(`Book not found with isbn ${isbn}`)
       throw new BookNotFoundException(isbn)
     }
     logger.info(`Book for the lender ${lenderId}`, { Book:item })
@@ -191,7 +191,7 @@ export class BookAccess {
         TableName: this.booksTable,
         Key: {
             categoryId: book.categoryId,
-            publishedDate: book.publishedDate
+            createdAt: book.createdAt
         },
         ConditionExpression: "#isbn = :isbn",
         UpdateExpression: 'SET #lenderId = :lenderId_val, #borrowed = :borrowed_val, #borrowedDate = :borrowedDate_val',
@@ -224,19 +224,21 @@ export class BookAccess {
         TableName: this.booksTable,
         Key: {
             categoryId: book.categoryId,
-            publishedDate: book.publishedDate
+            createdAt: book.createdAt
         },
         ConditionExpression: "#isbn = :isbn",
-        UpdateExpression: 'SET #title = :title_val, #author = :author_val',
+        UpdateExpression: 'SET #title = :title_val, #author = :author_val, #publishedDate = :publishedDate_val',
         ExpressionAttributeValues:{
             ":isbn": book.isbn,
             ":title_val": book.title,
-            ":author_val": book.author
+            ":author_val": book.author,
+            ":publishedDate_val": book.publishedDate
         },
         ExpressionAttributeNames: {
           "#isbn": "isbn",
           "#title": "title",
-          "#author": "author"
+          "#author": "author",
+          "#publishedDate": "publishedDate"
         },
         ReturnValues: "UPDATED_NEW"
         }).promise()
@@ -255,7 +257,7 @@ export class BookAccess {
         TableName: this.booksTable,
         Key: {
             categoryId: book.categoryId,
-            publishedDate: book.publishedDate
+            createdAt: book.createdAt
         },
         ConditionExpression: "#isbn = :isbn and #borrowed = :beforeBorrow",
         UpdateExpression: 'SET #lenderId = :lenderId_val, #borrowed = :afterBorrow, #borrowedDate = :borrowedDate_val',
@@ -289,7 +291,7 @@ export class BookAccess {
         TableName: this.booksTable,
         Key: {
             categoryId: book.categoryId,
-            publishedDate: book.publishedDate
+            createdAt: book.createdAt
         },
         ConditionExpression: "#isbn = :isbn and #borrowed = :beforeReturn and #lenderId = :lenderId",
         UpdateExpression: 'SET #borrowed = :afterReturn REMOVE #borrowedDate, #lenderId',
@@ -315,14 +317,14 @@ export class BookAccess {
     logger.info('Book updated!')
   }
 
-  async updateAttachment(isbn: string, categoryId: string, publishedDate: string, attachmentUrl: string): Promise<void> {
+  async updateAttachment(isbn: string, categoryId: string, createdAt: string, attachmentUrl: string): Promise<void> {
     logger.info(`Updating attachment for Book with isbn ${isbn}`)
     try {
         await this.docClient.update({
         TableName: this.booksTable,
         Key: {
             categoryId,
-            publishedDate
+            createdAt
         },
         ConditionExpression: "#isbn = :isbn",
         UpdateExpression: 'SET #attachmentUrl = :attachmentUrl_val',
@@ -345,14 +347,15 @@ export class BookAccess {
     logger.info('Attachment updated!')
   }
 
-  async deleteBook(isbn: string, categoryId: string, publishedDate: string): Promise<void> {
+  async deleteBook(isbn: string, categoryId: string, createdAt: string): Promise<void> {
     logger.info(`Deleting Book with isbn ${isbn}`)
+    //TODO: throw an error if condition is not met (if book is borrowed)
     try {
         await this.docClient.delete({
         TableName: this.booksTable,
         Key: {
             categoryId,
-            publishedDate
+            createdAt
         },
         ConditionExpression:"#borrowed = :borrowed_val and #isbn = :isbn_val",
         ExpressionAttributeValues:{
