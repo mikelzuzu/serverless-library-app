@@ -77,6 +77,7 @@ provider:
     BOOKS_S3_BUCKET: serverless-books-attachements-zuzu-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
     JWKS_URL: https://dev-zuzu.eu.auth0.com/.well-known/jwks.json
+    ELASTICSEARCH_INDEX: books-index
     #AWS_XRAY_CONTEXT_MISSING: LOG_ERROR
     #DISABLE_XRAY_TRACING: 1
     #_X_AMZN_TRACE_ID: 0
@@ -107,7 +108,7 @@ functions:
           method: get
           path: categories
           cors: true
-          #authorizer: Auth
+          authorizer: Auth
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -383,6 +384,33 @@ functions:
     deploymentSettings:
       type: Linear10PercentEvery1Minute
       alias: Live
+  
+  SyncWithElasticsearch:
+    environment:
+      ES_ENDPOINT: !GetAtt BooksSearch.DomainEndpoint
+    handler: src/lambda/dynamoDb/elasticSearchSync.handler
+    events:
+      - stream:
+          type: dynamodb
+          arn: !GetAtt BooksDynamoDBTable.StreamArn
+    deploymentSettings:
+      type: Linear10PercentEvery1Minute
+      alias: Live
+
+  SearchWithinElasticsearch:
+    environment:
+      ES_ENDPOINT: !GetAtt BooksSearch.DomainEndpoint
+    handler: src/lambda/http/searchBooks.handler
+    events:
+      - http:
+          method: get
+          path: books/search
+          cors: true
+          authorizer: Auth
+    iamRoleStatementsInherit: true
+    deploymentSettings:
+      type: Linear10PercentEvery1Minute
+      alias: Live
 
 resources:
   Resources:
@@ -493,28 +521,28 @@ resources:
               Resource: 'arn:aws:s3:::${self:provider.environment.BOOKS_S3_BUCKET}/*'
         Bucket: !Ref AttachmentsBucket
 
-    # BooksSearch:
-    #   Type: AWS::Elasticsearch::Domain
-    #   Properties:
-    #     ElasticsearchVersion: '6.3'
-    #     DomainName: books-search-${self:provider.stage}
-    #     ElasticsearchClusterConfig:
-    #       DedicatedMasterEnabled: false
-    #       InstanceCount: '1'
-    #       ZoneAwarenessEnabled: false
-    #       InstanceType: t2.small.elasticsearch
-    #     EBSOptions:
-    #       EBSEnabled: true
-    #       Iops: 0
-    #       VolumeSize: 10
-    #       VolumeType: 'gp2'
+    BooksSearch:
+      Type: AWS::Elasticsearch::Domain
+      Properties:
+        ElasticsearchVersion: '6.3'
+        DomainName: books-search-${self:provider.stage}
+        ElasticsearchClusterConfig:
+          DedicatedMasterEnabled: false
+          InstanceCount: '1'
+          ZoneAwarenessEnabled: false
+          InstanceType: t2.small.elasticsearch
+        EBSOptions:
+          EBSEnabled: true
+          Iops: 0
+          VolumeSize: 10
+          VolumeType: 'gp2'
 
-    #     AccessPolicies:
-    #       Version: '2012-10-17'
-    #       Statement:
-    #         -
-    #           Effect: Allow
-    #           Principal:
-    #             AWS: '*'
-    #           Action: 'es:*'
-    #           Resource: '*'
+        AccessPolicies:
+          Version: '2012-10-17'
+          Statement:
+            -
+              Effect: Allow
+              Principal:
+                AWS: '*'
+              Action: 'es:*'
+              Resource: '*'
