@@ -8,5 +8,6 @@ export interface BookItem {
     borrowed: boolean
     borrowedDate?:string
     attachmentUrl?: string
+    createdAt: string
   }
   

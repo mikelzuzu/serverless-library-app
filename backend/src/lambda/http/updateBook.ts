@@ -29,7 +29,7 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
   } catch (error) {
     logger.error('Error updating book.', { errorMessage: error.message})
     if (error instanceof HttpException){
-      // send back http 404 not found error
+      // send back http error from our exception class
       const exception: HttpException = error
       return {
         statusCode: exception.status,

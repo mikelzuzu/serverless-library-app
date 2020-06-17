@@ -4,8 +4,11 @@ import { CreateBookRequest } from '../requests/CreateBookRequest'
 import { UpdateBookRequest } from '../requests/UpdateBookRequest'
 import { UpdateBookDetailsRequest } from '../requests/UpdateBookDetailsRequest'
 import { DocumentClient, Key } from 'aws-sdk/clients/dynamodb'
+import BookStatusException from '../utils/BookStatusException';
+import { createLogger } from '../utils/logger';
 
 const bookAccess = new BookAccess()
+const logger = createLogger('Books')
 
 export async function getAllBooks(): Promise<BookItem[]> {
   return bookAccess.getAllBooks()
@@ -45,7 +48,8 @@ export async function createBook(
     title: createBookRequest.title,
     author: createBookRequest.author,
     publishedDate: createBookRequest.publishedDate,
-    borrowed: false
+    borrowed: false,
+    createdAt: new Date().toISOString()
     //removed borrowedDate and lenderId as still in not borrowed
     //removed attachment as it is not in S3 bucket yet. It is updated once the upload url is retrieved
     //attachmentUrl: `https://${bucketName}.s3.amazonaws.com/${itemId}`
@@ -61,8 +65,12 @@ export async function updateBook(
 
   if (updateBookRequest.borrowed && book.borrowed) {
     //We can not borrow a book that is already borrowed
+    logger.error(`Book with isbn ${isbn} is already borrowed`)
+    throw new BookStatusException(isbn, "borrowed")
   } else if (!updateBookRequest.borrowed && !book.borrowed) {
     //We cannot return a book that it is not borrowed
+    logger.error(`Book with isbn ${isbn} is already returned`)
+    throw new BookStatusException(isbn, "returned")
   } else {
     return await bookAccess.updateBook({
       isbn: isbn,
@@ -72,7 +80,8 @@ export async function updateBook(
       author: book.author,
       publishedDate: book.publishedDate,
       borrowed: updateBookRequest.borrowed,
-      borrowedDate: updateBookRequest.borrowedDate
+      borrowedDate: updateBookRequest.borrowedDate,
+      createdAt: book.createdAt
     })
   }
 }
@@ -90,9 +99,10 @@ export async function updateBookDetails(
     categoryId: book.categoryId,
     title: updateBookDetailsRequest.title,
     author: updateBookDetailsRequest.author,
-    publishedDate: book.publishedDate,
+    publishedDate: updateBookDetailsRequest.publishedDate,
     borrowed: false,
-    borrowedDate: ""
+    borrowedDate: "",
+    createdAt: book.createdAt
   })
 }
 
@@ -103,6 +113,11 @@ export async function updateBookToBorrow(
 
   const book = await bookAccess.getBook(isbn)
 
+  if (book.borrowed) {
+    logger.error(`Book with isbn ${isbn} is already borrowed`)
+    throw new BookStatusException(isbn, "borrowed")
+  }
+
   return await bookAccess.updateBookToBorrow({
     isbn: isbn,
     lenderId: lenderId,
@@ -111,7 +126,8 @@ export async function updateBookToBorrow(
     author: book.author,
     publishedDate: book.publishedDate,
     borrowed: true,
-    borrowedDate: new Date().toISOString()
+    borrowedDate: new Date().toISOString(),
+    createdAt: book.createdAt
   })
 }
 
@@ -122,6 +138,11 @@ export async function updateBookToReturn(
 
   const book = await bookAccess.getBook(isbn)
 
+  if (!book.borrowed) {
+    logger.error(`Book with isbn ${isbn} is already returned`)
+    throw new BookStatusException(isbn, "returned")
+  }
+
   return await bookAccess.updateBookToReturn({
     isbn: isbn,
     lenderId: lenderId,
@@ -130,7 +151,8 @@ export async function updateBookToReturn(
     author: book.author,
     publishedDate: book.publishedDate,
     borrowed: false,
-    borrowedDate: new Date().toISOString()
+    borrowedDate: new Date().toISOString(),
+    createdAt: book.createdAt
   })
 }
 
@@ -141,7 +163,7 @@ export async function updateAttachment(
   //need to find category of the book
   const book = await bookAccess.getBook(isbn)
 
-  return await bookAccess.updateAttachment(isbn, book.categoryId, book.publishedDate, attachmentUrl)
+  return await bookAccess.updateAttachment(isbn, book.categoryId, book.createdAt, attachmentUrl)
 }
 
 export async function deleteBook(
@@ -151,7 +173,7 @@ export async function deleteBook(
   if (book.borrowed) {
     //we cannot delete a book that is borrowed
   } else {
-    return await bookAccess.deleteBook(isbn, book.categoryId, book.publishedDate)
+    return await bookAccess.deleteBook(isbn, book.categoryId, book.createdAt)
   }
 
 }
