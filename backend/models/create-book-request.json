@@ -19,7 +19,7 @@
             "type": "string",
             "minLength": 1,
             "pattern": "^[A-Za-z][a-zA-Z0-9\\:\\;\\_\\-\\s]+$",
-            "description": "Name of the title has to start with letter and can be followed by more letters, numbers, whitespaces, hyphen, colon, semicon, underscore"
+            "description": "Name of the title has to start with letter and can be followed by more letters, numbers, whitespaces, hyphen, colon, semicolon, underscore"
         },
         "author": {
             "type": "string",

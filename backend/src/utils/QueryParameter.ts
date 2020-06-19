@@ -39,6 +39,23 @@ export function parseNextKeyParameter(event) {
 }
 
 /**
+ * Get value of the query parameter.
+ *
+ * @param {Object} event HTTP event passed to a Lambda function
+ *
+ * @returns {Object} parsed "query" parameter for ES
+ */
+export function parseQueryParameter(event) {
+    const query = getQueryParameter(event, 'query')
+    if (!query) {
+        return undefined
+    }
+
+    //const uriDecoded = decodeURIComponent(query)
+    return query
+}
+
+/**
  * Get a query parameter or return "undefined"
  *
  * @param {Object} event HTTP event passed to a Lambda function
