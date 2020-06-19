@@ -1,0 +1,1348 @@
+{
+	"info": {
+		"_postman_id": "042151c9-3fb0-4408-b03a-6f34392216e7",
+		"name": "Librarian",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "BOOKs",
+			"item": [
+				{
+					"name": "Search books",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/books/search?query=herman",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"{{apiregion}}",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"books",
+								"search"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "herman"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all books",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/admin/books?limit=10&nextKey=",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"{{apiregion}}",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"admin",
+								"books"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "nextKey",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get available books from category",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/categories/6a3c23fa-0aa6-4992-86d9-66e8da6874cc/booksFree?limit=5&nextKey=",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"{{apiregion}}",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"categories",
+								"6a3c23fa-0aa6-4992-86d9-66e8da6874cc",
+								"booksFree"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "5"
+								},
+								{
+									"key": "nextKey",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all books from category",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken2}}"
+							}
+						],
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/categories/6a3c23fa-0aa6-4992-86d9-66e8da6874cc/books?limit=5&nextKey=",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"{{apiregion}}",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"categories",
+								"6a3c23fa-0aa6-4992-86d9-66e8da6874cc",
+								"books"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "5"
+								},
+								{
+									"key": "nextKey",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all books borrowed by you",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/categories/6a3c23fa-0aa6-4992-86d9-66e8da6874cc/books/borrowed",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"{{apiregion}}",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"categories",
+								"6a3c23fa-0aa6-4992-86d9-66e8da6874cc",
+								"books",
+								"borrowed"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Book",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken2}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"isbn\": \"978-0060188702\",\n\t\"author\": \"Miguel de Cervantes\",\n\t\"title\": \"Don Quixote\",\n\t\"publishedDate\": \"2003-10-21\",\n\t\"categoryId\": \"e6258771-0bad-4747-8835-93e878c2a76d\"\n}"
+						},
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/books",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"{{apiregion}}",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Book Copy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken2}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"isbn\": \"978-1420953787\",\n\t\"author\": \"Alexandre Dumas\",\n\t\"title\": \"The Three Musketeers\",\n\t\"publishedDate\": \"2016-09-18\",\n\t\"categoryId\": \"e6258771-0bad-4747-8835-93e878c2a76d\"\n}"
+						},
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/books",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"{{apiregion}}",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Book Copy Copy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken2}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"isbn\": \"978-1514649749\",\n\t\"author\": \"Herman Melville\",\n\t\"title\": \"Moby Dick\",\n\t\"publishedDate\": \"2015-06-22\",\n\t\"categoryId\": \"e6258771-0bad-4747-8835-93e878c2a76d\"\n}"
+						},
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/books",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"{{apiregion}}",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Book Copy Copy Copy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken2}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"isbn\": \"978-1542009843\",\n\t\"author\": \"Herman Melville\",\n\t\"title\": \"Never Look Back\",\n\t\"publishedDate\": \"2020-07-01\",\n\t\"categoryId\": \"6a3c23fa-0aa6-4992-86d9-66e8da6874cc\"\n}"
+						},
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/books",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"{{apiregion}}",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Book Copy Copy Copy Copy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken2}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"isbn\": \"978-1503904019\",\n\t\"author\": \"Aliza Fogelson\",\n\t\"title\": \"The Lending Library: A Novel\",\n\t\"publishedDate\": \"2020-07-01\",\n\t\"categoryId\": \"6a3c23fa-0aa6-4992-86d9-66e8da6874cc\"\n}"
+						},
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/books",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"{{apiregion}}",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update book",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken2}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"lenderId\": \"Test20\",\n\t\"borrowedDate\": \"2020-12-11\",\n\t\"borrowed\": false\n}"
+						},
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/admin/books/978-1420953787/status",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"{{apiregion}}",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"admin",
+								"books",
+								"978-1420953787",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update book self service",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"borrowed\": true\n}"
+						},
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/books/978-0060188702",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"{{apiregion}}",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"books",
+								"978-0060188702"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update book details",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken2}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"title\": \"The Lending Library: A Novel\",\n\t\"author\": \"Aliza Fogelson\",\n\t\"publishedDate\": \"2020-07-01\"\n}"
+						},
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/admin/books/978-1503904019/details",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"{{apiregion}}",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"admin",
+								"books",
+								"978-1503904019",
+								"details"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete book",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken2}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/books/978-1503904019",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"{{apiregion}}",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"books",
+								"978-1503904019"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get attachment URL",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken2}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/books/978-0060188702/attachment",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"{{apiregion}}",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"books",
+								"978-0060188702",
+								"attachment"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "417884ec-d9bd-4a5e-bb42-6e06555db5a7",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "16bd18b6-e83d-4ecf-aa93-d6cfa8a5fe2b",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "CATEGORYs",
+			"item": [
+				{
+					"name": "Get all categories",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/categories",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"{{apiregion}}",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a category",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Romance\",\n\t\"description\": \"Romance book\"\n}"
+						},
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/categories",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"{{apiregion}}",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a category Copy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Adventure\",\n\t\"description\": \"Adventure book\"\n}"
+						},
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/categories",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"{{apiregion}}",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"categories"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "OFFLINE",
+			"item": [
+				{
+					"name": "Create Book localhost Copy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken2}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"isbn\": \"978-1542009843\",\n\t\"author\": \"Mary Burton\",\n\t\"title\": \"Never Look Back \",\n\t\"publishedDate\": \"2020-07-01\",\n\t\"categoryId\": \"b9675ec7-1da8-4c8e-aa20-ae0ef95ac0a2\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3003/dev/books",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3003",
+							"path": [
+								"dev",
+								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Book localhost Copy Copy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken2}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"isbn\": \"1503904016\",\n\t\"author\": \"Aliza Fogelson\",\n\t\"title\": \"The Lending Library: A Novel\",\n\t\"publishedDate\": \"2020-07-01\",\n\t\"categoryId\": \"b9675ec7-1da8-4c8e-aa20-ae0ef95ac0a2\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3003/dev/books",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3003",
+							"path": [
+								"dev",
+								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a category localhost",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Romance\",\n\t\"description\": \"Romance books\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3003/dev/categories",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3003",
+							"path": [
+								"dev",
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a category localhost Copy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Adventure\",\n\t\"description\": \"Adventure books\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3003/dev/categories",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3003",
+							"path": [
+								"dev",
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all categories localhost",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3003/dev/categories",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3003",
+							"path": [
+								"dev",
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete book localhost",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:3003/dev/books/978-0060188702",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3003",
+							"path": [
+								"dev",
+								"books",
+								"978-0060188702"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update book details localhost",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken2}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"title\": \"The Lending Library: A Novel\",\n\t\"author\": \"Aliza Fogelson\",\n\t\"publishedDate\": \"2020-07-01\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3003/dev/admin/books/1503904016/details",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3003",
+							"path": [
+								"dev",
+								"admin",
+								"books",
+								"1503904016",
+								"details"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update book self service localhost",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken2}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"borrowed\": true\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3003/dev/books/978-0060188702",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3003",
+							"path": [
+								"dev",
+								"books",
+								"978-0060188702"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update book localhost",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken2}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"lenderId\": \"Test20\",\n\t\"borrowedDate\": \"2020-06-09\",\n\t\"borrowed\": false\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3003/dev/admin/books/978-1542009843/status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3003",
+							"path": [
+								"dev",
+								"admin",
+								"books",
+								"978-1542009843",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all books borrowed by you localhost",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken2}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3003/dev/categories/cf6e5234-8a24-4012-b0af-3fbc11e3de27/books/borrowed",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3003",
+							"path": [
+								"dev",
+								"categories",
+								"cf6e5234-8a24-4012-b0af-3fbc11e3de27",
+								"books",
+								"borrowed"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all books from category localhost",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken2}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3003/dev/categories/54f0fc67-d2f0-46c0-99f8-7371f012f8a2/books?limit=5&nextKey=",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3003",
+							"path": [
+								"dev",
+								"categories",
+								"54f0fc67-d2f0-46c0-99f8-7371f012f8a2",
+								"books"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "5"
+								},
+								{
+									"key": "nextKey",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get available books from category localhost",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3003/dev/categories/54f0fc67-d2f0-46c0-99f8-7371f012f8a2/booksFree?limit=5&nextKey=",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3003",
+							"path": [
+								"dev",
+								"categories",
+								"54f0fc67-d2f0-46c0-99f8-7371f012f8a2",
+								"booksFree"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "5"
+								},
+								{
+									"key": "nextKey",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all books localhost",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3003/dev/admin/books",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3003",
+							"path": [
+								"dev",
+								"admin",
+								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Book localhost",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken2}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"isbn\": \"978-0060188702\",\n\t\"author\": \"Miguel de Cervantes\",\n\t\"title\": \"Don Quixote\",\n\t\"publishedDate\": \"2003-10-21\",\n\t\"categoryId\": \"54f0fc67-d2f0-46c0-99f8-7371f012f8a2\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3003/dev/books",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3003",
+							"path": [
+								"dev",
+								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Book",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken2}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"isbn\": \"978-0060188702\",\n\t\"author\": \"Miguel de Cervantes\",\n\t\"title\": \"Don Quixote\",\n\t\"publishedDate\": \"2003-10-21\",\n\t\"categoryId\": \"fca3c5ee-e763-44d7-b2e4-deec2e3d1192\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3003/dev/books",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3003",
+							"path": [
+								"dev",
+								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search books",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3003/dev/books/search?query=The Lending Library",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3003",
+							"path": [
+								"dev",
+								"books",
+								"search"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "The Lending Library"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "11a5a349-60a5-41e9-a05b-50472980a9cb",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "0933dae0-3777-4500-b6f9-e8c573f802f0",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "91f14183-d4e9-4890-bec3-c81010012387",
+			"key": "apiId",
+			"value": "oo2v8900p8",
+			"type": "string"
+		},
+		{
+			"id": "2c8c838c-7d25-4b2a-a391-e250868fe88f",
+			"key": "authToken",
+			"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik1zcDZKWUFWNzBuZGxJZ3JnWXYySSJ9.eyJpc3MiOiJodHRwczovL2Rldi16dXp1LmV1LmF1dGgwLmNvbS8iLCJzdWIiOiJnb29nbGUtb2F1dGgyfDEwMTE4Nzg5MDcxMzk0OTYyMjcxMiIsImF1ZCI6InI3Y0h0UzRDeVVjdXdYTVk0T2hsNlF1bWd2WDZBeEFLIiwiaWF0IjoxNTkxNTQyMDEwLCJleHAiOjE1OTE5NzQwMTAsImF0X2hhc2giOiJXWkVTV19jY2Zmcy1LZDR5VGRFLXF3Iiwibm9uY2UiOiJZVnNMMGZrbVJyUjBudy04SGliczRoSWxwflRINkZqRyJ9.RUtrhCgc79GBNhbGLJWSamG4oxcfRK76A-QG1YkHUtYc9V7kJ3H7fXMvrYkDtP8UjDtkhrTxlClnTa-nA9fyzF6wC-asfc27retJbSkRW81s9mep-Tiz9aoll4Yjqfwqr6CHkBS_9gP_8HbHaTl0tnyTkAGXhhZc8Tmia0cinByw0gpiu9idhTbNe_w7D1No6hkom0W6a6YT8i1QPH3gjUDXdEle3pH4jIiKqImxB06Z_VEzt1NMWjPjP3tEJ7e7H5LA1tzMK5yUENshsLLkGc3lD61A2-_JLNvCb1BJAM06wyeQnMXraOGJGnrgU1oRnt1WdN2j5jmIBQqhXh6sag",
+			"type": "string"
+		},
+		{
+			"id": "67d0399d-90e5-48a9-b9a7-14d0aeeb340c",
+			"key": "authToken2",
+			"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik1zcDZKWUFWNzBuZGxJZ3JnWXYySSJ9.eyJpc3MiOiJodHRwczovL2Rldi16dXp1LmV1LmF1dGgwLmNvbS8iLCJzdWIiOiJnb29nbGUtb2F1dGgyfDEwOTk4MDEwMDY4NTE1MzY1NjA2NCIsImF1ZCI6InI3Y0h0UzRDeVVjdXdYTVk0T2hsNlF1bWd2WDZBeEFLIiwiaWF0IjoxNTkxNTQyNzAwLCJleHAiOjE1OTE5NzQ3MDAsImF0X2hhc2giOiJpNnVQNXpITUxUWGhxaGloMWw5bC1RIiwibm9uY2UiOiJMMzRJSjRZeTlKZlZxdHdsT1JWZ3VQOTFGLlJoc2VFViJ9.rCL-4fUC00mJ5eeqjGhFjJbHxR_zESknIV3G7NOc0XI7Q-ZNUCoVmp3P3hK3eJxg3d4UETq5XGnjHl0wqWKdTn37rj1QOq3V82hRYnGTj8r1q4-eePz9A09b45ohKB5a6IU9Kcx37eGgFeXzqL-c09oLh4zVzzzpzYHSFs8xuDNlDFUneJL0lY1M6G3Yr4Vbd3LTqNPgUYSbhmSMPz9HjVxpGvh0Nra7l0HEpza1oeIdLvg1Zemr4Oxe-THDJIohMq0bjodDaTghvuK9yBGzLXzS7JIgNhDl-yxYuell5EVebGSnPSpPe2jTWiRX90AWoM0O5eMphFs4c1TsW8VO_w",
+			"type": "string"
+		},
+		{
+			"id": "4c132bf2-364c-458a-9ee7-2b0d79e2f97b",
+			"key": "apiregion",
+			"value": "eu-west-1",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
