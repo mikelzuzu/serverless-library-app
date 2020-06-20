@@ -42,7 +42,7 @@ To deploy an application run the following commands:
 ```
 cd backend
 npm install
-sls deploy -v
+sls deploy -v --aws-profile serverless
 ```
 
 ### Postman collection
