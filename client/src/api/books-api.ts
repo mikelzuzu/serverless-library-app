@@ -17,6 +17,19 @@ export async function getBooks(idToken: string): Promise<Book[]> {
   return response.data.items
 }
 
+export async function getCategoriesBooks(idToken: string, categoryId: string): Promise<Book[]> {
+  console.log('Fetching books')
+
+  const response = await Axios.get(`${apiEndpoint}/categories/${categoryId}/booksFree?limit=20&nextKey=`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${idToken}`
+    },
+  })
+  console.log('Books:', response.data)
+  return response.data.items
+}
+
 export async function createBook(
   idToken: string,
   newBook: CreateBookRequest

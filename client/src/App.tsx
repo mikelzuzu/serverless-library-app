@@ -7,6 +7,9 @@ import { EditBook } from './components/EditBook'
 import { LogIn } from './components/LogIn'
 import { NotFound } from './components/NotFound'
 import { Books } from './components/Books'
+import { CategoriesList } from './components/CategoriesList'
+import { CreateCategory } from './components/CreateCategory'
+import { CategoriesBooks } from './components/CategoriesBooks'
 
 export interface AppProps {}
 
@@ -59,6 +62,9 @@ export default class App extends Component<AppProps, AppState> {
         <Menu.Item name="home">
           <Link to="/">Home</Link>
         </Menu.Item>
+        <Menu.Item name="All Books">
+          <Link to="/admin/books">All Books</Link>
+        </Menu.Item>
 
         <Menu.Menu position="right">{this.logInLogOutButton()}</Menu.Menu>
       </Menu>
@@ -89,10 +95,26 @@ export default class App extends Component<AppProps, AppState> {
     return (
       <Switch>
         <Route
-          path="/"
+          path="/admin/books"
           exact
           render={props => {
             return <Books {...props} auth={this.props.auth} />
+          }}
+        />
+
+        <Route
+          path="/categories/create"
+          exact
+          render={props => {
+            return <CreateCategory {...props} auth={this.props.auth} />
+          }}
+        />
+
+        <Route
+          path="/categories/:categoryId"
+          exact
+          render={props => {
+            return <CategoriesBooks {...props} auth={this.props.auth} />
           }}
         />
 
@@ -102,6 +124,15 @@ export default class App extends Component<AppProps, AppState> {
           render={props => {
             return <EditBook {...props} auth={this.props.auth} />
           }}
+        />
+
+        <Route 
+          path="/" 
+          exact
+          render={props => {
+            return <CategoriesList {...props} auth={this.props.auth} />
+          }}
+          // component={CategoriesList} 
         />
 
         <Route component={NotFound} />
