@@ -1,65 +1,53 @@
 import { History } from 'history'
-import update from 'immutability-helper'
 import * as React from 'react'
 import {
-  Checkbox,
   Divider,
   Grid,
   Header,
-  Image,
+  Input,
   Loader
 } from 'semantic-ui-react'
 
-import { getCategoriesBooks,patchBook } from '../api/books-api'
+import { searchBooks } from '../api/books-api'
 import Auth from '../auth/Auth'
 import { Book } from '../types/Book'
 
-interface CategoriesBooksProps {
+interface SearchBooksProps {
   auth: Auth
   history: History
-  match: {
-    params: {
-      categoryId: string
-    }
-  }
 }
 
-interface CategoriesBooksState {
+interface SearchBooksState {
   books: Book[]
+  query: string
   loadingBooks: boolean
 }
 
-export class CategoriesBooks extends React.PureComponent<CategoriesBooksProps, CategoriesBooksState> {
-  state: CategoriesBooksState = {
+export class SearchBooks extends React.PureComponent<SearchBooksProps, SearchBooksState> {
+  state: SearchBooksState = {
     books: [],
-    loadingBooks: true
+    query: '',
+    loadingBooks: false
   }
 
-  onBookCheck = async (pos: number) => {
+  handleQuery = (event: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({ query: event.target.value })
+  }
+
+  onSearchBooks = async (event: React.ChangeEvent<HTMLButtonElement>) => {
     try {
-      const book = this.state.books[pos]
-      await patchBook(this.props.auth.getIdToken(), book.isbn, {
-        borrowed: !book.borrowed
-      })
+      //const dueDate = this.calculateDueDate()
       this.setState({
-        books: update(this.state.books, {
-          [pos]: { borrowed: { $set: !book.borrowed } }
-        })
+        books: [],
+        loadingBooks: true
       })
-    } catch {
-      alert('Book update failed')
-    }
-  }
-
-  async componentDidMount() {
-    try {
-      const books = await getCategoriesBooks(this.props.auth.getIdToken(), this.props.match.params.categoryId)
+      const books = await searchBooks(this.props.auth.getIdToken(), this.state.query)
       this.setState({
         books,
         loadingBooks: false
       })
-    } catch (e) {
-      alert(`Failed to fetch books: ${e.message}`)
+    } catch {
+      alert('Todo creation failed')
     }
   }
 
@@ -68,8 +56,34 @@ export class CategoriesBooks extends React.PureComponent<CategoriesBooksProps, C
       <div>
         <Header as="h1">BOOKs</Header>
 
+        {this.renderSearchBookInput()}
+
         {this.renderBooks()}
       </div>
+    )
+  }
+
+  renderSearchBookInput() {
+    return (
+      <Grid.Row>
+        <Grid.Column width={16}>
+          <Input
+            action={{
+              color: 'teal',
+              labelPosition: 'middle',
+              icon: 'search',
+              content: 'Search',
+              onClick: this.onSearchBooks
+            }}
+            fluid
+            placeholder="Enter the query"
+            onChange={this.handleQuery}
+          />
+        </Grid.Column>
+        <Grid.Column width={16}>
+          <Divider />
+        </Grid.Column>
+      </Grid.Row>
     )
   }
 
@@ -98,11 +112,8 @@ export class CategoriesBooks extends React.PureComponent<CategoriesBooksProps, C
         {this.state.books.map((book, pos) => {
           return (
             <Grid.Row key={book.isbn}>
-              <Grid.Column width={1} verticalAlign="middle">
-                <Checkbox
-                  onChange={() => this.onBookCheck(pos)}
-                  checked={book.borrowed}
-                />
+              <Grid.Column width={3} verticalAlign="middle">
+              {book.isbn}
               </Grid.Column>
               <Grid.Column width={5} verticalAlign="middle">
                 {book.title}
@@ -113,9 +124,6 @@ export class CategoriesBooks extends React.PureComponent<CategoriesBooksProps, C
               <Grid.Column width={3} floated="right">
                 {book.publishedDate}
               </Grid.Column>
-              {book.attachmentUrl && (
-                <Image src={book.attachmentUrl} size="small" wrapped />
-              )}
               <Grid.Column width={16}>
                 <Divider />
               </Grid.Column>
