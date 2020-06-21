@@ -42,7 +42,7 @@ To deploy an application run the following commands:
 ```
 cd backend
 npm install
-sls deploy -v
+sls deploy -v --aws-profile serverless
 ```
 
 ### Postman collection
@@ -72,6 +72,37 @@ Right click on the imported collection to set variables for the collection:
 Provide variables for the collection (similarly to how this was done in the course):
 
 ![Alt text](screenshots/postman/import-collection-5.png?raw=true "Image 5")
+
+### Frontend
+This basic frontend is based on what was in the Cloud Developer Nanodegree course 4. I was basically taking from there and changed a little bit. It does not handle all the endpoint that the backend has so it is good to retrieve the token and use it in Postman.
+
+The frontend client is retrieving and creating categories. Moreover, we are able to navigate to specific category to check all available books within that category. There we will be able to borrow a book that is free clicking on the checkbox. 
+
+Moreover, there is more tabs that we can navigate called "All Books". This should be just admin tab as here we will see all the books and we will be able to create more books as well.
+
+Last tab in for searching books in ElasticSearch. We will be able to type our name and after clicking on the search button, the system will try to find data in the title or author fields within ElasticSearch.
+
+Main page:
+![Alt text](screenshots/frontend/mainPage.png?raw=true "Main page")
+
+Books in a Category:
+![Alt text](screenshots/frontend/insideCategory.png?raw=true "Inside Category")
+
+Borrowing a book
+![Alt text](screenshots/frontend/selfBorrowed.png?raw=true "Borrowed a book")
+
+Borrowed by my client
+![Alt text](screenshots/frontend/BorrowedByMe.png?raw=true "Borrowed by me")
+
+All Book:
+![Alt text](screenshots/frontend/adminBooksPage.png?raw=true "All book")
+
+Uploading image for a book:
+![Alt text](screenshots/frontend/uploadBookImage.png?raw=true "Upload Book Image")
+
+All books with image:
+![Alt text](screenshots/frontend/afterUploadingImage.png?raw=true "All books with image")
+
 
 ## BOOKS items
 
@@ -124,7 +155,9 @@ The only parameters that I decided to index were isbn, categoryId, publishedDate
 ## X-Ray
 This is the graph using postman.
 ![Alt text](screenshots/full-xray.png?raw=true "X-Ray")
+HTTP tracing:
 ![Alt text](screenshots/http-xray.png?raw=true "HTTP tracing")
+Tracing synching DynamoDB with ElasticSearch:
 ![Alt text](screenshots/postman/ES-sync-xray.png?raw=true "Tracing when syncing DynamoDB with ElasticSearch")
 
 ## Future work
