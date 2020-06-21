@@ -4,6 +4,7 @@ import { DocumentClient, Key } from 'aws-sdk/clients/dynamodb'
 import { BookItem } from '../models/BookItem';
 import { createLogger } from '../utils/logger';
 import BookNotFoundException from '../utils/BookNotFoundException';
+import BookNotFoundLenderException from '../utils/BookNotFoundLenderException';
 
 const AWSXRay = require('aws-xray-sdk');
 const XAWS = AWSXRay.captureAWS(AWS)
@@ -168,7 +169,7 @@ export class BookAccess {
     const item = result.Items[0]
     if (item === undefined) {
       logger.error(`Book not found with isbn ${isbn}`)
-      throw new BookNotFoundException(isbn)
+      throw new BookNotFoundLenderException(isbn)
     }
     logger.info(`Book for the lender ${lenderId}`, { Book:item })
     return item as BookItem
