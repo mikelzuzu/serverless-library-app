@@ -103,6 +103,12 @@ Uploading image for a book:
 All books with image:
 ![Alt text](screenshots/frontend/afterUploadingImage.png?raw=true "All books with image")
 
+Search for books:
+![Alt text](screenshots/frontend/SearchBook.png?raw=true "Search books")
+
+Get a book:
+![Alt text](screenshots/frontend/getBook.png?raw=true "Get a book")
+
 
 ## BOOKS items
 
@@ -163,3 +169,8 @@ Tracing synching DynamoDB with ElasticSearch:
 ## Future work
 - As mentioned before, have different type of users and protect endpoints according to that.
 - Improve the frontend
+* Add a new page from creating books on its own and a dropdown list of categories to avoid human errors
+
+- I know that one of the requirements of project was to avoid scans but I only used for categories (which we all know we don't have thousand or neither hundreds of them) or for retrieving all books. This last one is just for the admin librarian and should never affect the lender (customer). Moreover the admin has an alternative option of searching for a book in Elasticsearch and after retrieving the ISBN should be able to get all the details of the book (this option should be fast). Moreover, the scan operation are just used with Pagination (the other functions are never called).
+
+- Maintain ElasticSearch up to date if the details of the books were updated. Updates operations are not great in indexes so this should be schedule periodically.

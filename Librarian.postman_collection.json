@@ -20,7 +20,7 @@
 							}
 						],
 						"url": {
-							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/books/search?query=herman",
+							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/books/search?query=romeo",
 							"protocol": "https",
 							"host": [
 								"{{apiId}}",
@@ -37,7 +37,7 @@
 							"query": [
 								{
 									"key": "query",
-									"value": "herman"
+									"value": "romeo"
 								}
 							]
 						}
@@ -85,6 +85,37 @@
 					"response": []
 				},
 				{
+					"name": "Get book",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/admin/books/978-1542009843",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"{{apiregion}}",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"admin",
+								"books",
+								"978-1542009843"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get available books from category",
 					"request": {
 						"method": "GET",
@@ -96,7 +127,7 @@
 							}
 						],
 						"url": {
-							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/categories/6a3c23fa-0aa6-4992-86d9-66e8da6874cc/booksFree?limit=5&nextKey=",
+							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/categories/e6258771-0bad-4747-8835-93e878c2a76d/books/free?limit=5&nextKey=",
 							"protocol": "https",
 							"host": [
 								"{{apiId}}",
@@ -108,8 +139,9 @@
 							"path": [
 								"dev",
 								"categories",
-								"6a3c23fa-0aa6-4992-86d9-66e8da6874cc",
-								"booksFree"
+								"e6258771-0bad-4747-8835-93e878c2a76d",
+								"books",
+								"free"
 							],
 							"query": [
 								{
@@ -137,7 +169,7 @@
 							}
 						],
 						"url": {
-							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/categories/6a3c23fa-0aa6-4992-86d9-66e8da6874cc/books?limit=5&nextKey=",
+							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/categories/e6258771-0bad-4747-8835-93e878c2a76d/books?limit=5&nextKey=",
 							"protocol": "https",
 							"host": [
 								"{{apiId}}",
@@ -149,7 +181,7 @@
 							"path": [
 								"dev",
 								"categories",
-								"6a3c23fa-0aa6-4992-86d9-66e8da6874cc",
+								"e6258771-0bad-4747-8835-93e878c2a76d",
 								"books"
 							],
 							"query": [
@@ -217,7 +249,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"isbn\": \"978-0060188702\",\n\t\"author\": \"Miguel de Cervantes\",\n\t\"title\": \"Don Quixote\",\n\t\"publishedDate\": \"2003-10-21\",\n\t\"categoryId\": \"e6258771-0bad-4747-8835-93e878c2a76d\"\n}"
+							"raw": "{\n\t\"isbn\": \"978-0060188702\",\n\t\"author\": \"Miguel de Cervantes\",\n\t\"title\": \"Don Quixote\",\n\t\"publishedDate\": \"2003-10-21\",\n\t\"categoryId\": \"e6258771-0bad-4747-8835-93e878c2a76d\"\n}",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/books",
@@ -256,7 +291,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"isbn\": \"978-1420953787\",\n\t\"author\": \"Alexandre Dumas\",\n\t\"title\": \"The Three Musketeers\",\n\t\"publishedDate\": \"2016-09-18\",\n\t\"categoryId\": \"e6258771-0bad-4747-8835-93e878c2a76d\"\n}"
+							"raw": "{\n\t\"isbn\": \"978-1420953787\",\n\t\"author\": \"Alexandre Dumas\",\n\t\"title\": \"The Three Musketeers\",\n\t\"publishedDate\": \"2016-09-18\",\n\t\"categoryId\": \"e6258771-0bad-4747-8835-93e878c2a76d\"\n}",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/books",
@@ -295,7 +333,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"isbn\": \"978-1514649749\",\n\t\"author\": \"Herman Melville\",\n\t\"title\": \"Moby Dick\",\n\t\"publishedDate\": \"2015-06-22\",\n\t\"categoryId\": \"e6258771-0bad-4747-8835-93e878c2a76d\"\n}"
+							"raw": "{\n\t\"isbn\": \"978-1514649749\",\n\t\"author\": \"Herman Melville\",\n\t\"title\": \"Moby Dick\",\n\t\"publishedDate\": \"2015-06-22\",\n\t\"categoryId\": \"e6258771-0bad-4747-8835-93e878c2a76d\"\n}",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/books",
@@ -334,7 +375,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"isbn\": \"978-1542009843\",\n\t\"author\": \"Herman Melville\",\n\t\"title\": \"Never Look Back\",\n\t\"publishedDate\": \"2020-07-01\",\n\t\"categoryId\": \"6a3c23fa-0aa6-4992-86d9-66e8da6874cc\"\n}"
+							"raw": "{\n\t\"isbn\": \"978-1542009843\",\n\t\"author\": \"Herman Melville\",\n\t\"title\": \"Never Look Back\",\n\t\"publishedDate\": \"2020-07-01\",\n\t\"categoryId\": \"6a3c23fa-0aa6-4992-86d9-66e8da6874cc\"\n}",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/books",
@@ -373,7 +417,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"isbn\": \"978-1503904019\",\n\t\"author\": \"Aliza Fogelson\",\n\t\"title\": \"The Lending Library: A Novel\",\n\t\"publishedDate\": \"2020-07-01\",\n\t\"categoryId\": \"6a3c23fa-0aa6-4992-86d9-66e8da6874cc\"\n}"
+							"raw": "{\n\t\"isbn\": \"978-0061969058\",\n\t\"author\": \"CS Lewis\",\n\t\"title\": \"The Chronicles of Narnia\",\n\t\"publishedDate\": \"2010-10-26\",\n\t\"categoryId\": \"e6258771-0bad-4747-8835-93e878c2a76d\"\n}",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/books",
@@ -412,10 +459,13 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"lenderId\": \"Test20\",\n\t\"borrowedDate\": \"2020-12-11\",\n\t\"borrowed\": false\n}"
+							"raw": "{\n\t\"lenderId\": \"Test20\",\n\t\"borrowedDate\": \"2020-12-11\",\n\t\"borrowed\": false\n}",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
-							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/admin/books/978-1420953787/status",
+							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/admin/books/978-1503904019/status",
 							"protocol": "https",
 							"host": [
 								"{{apiId}}",
@@ -428,7 +478,7 @@
 								"dev",
 								"admin",
 								"books",
-								"978-1420953787",
+								"978-1503904019",
 								"status"
 							]
 						}
@@ -454,10 +504,13 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"borrowed\": true\n}"
+							"raw": "{\n\t\"borrowed\": true\n}",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
-							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/books/978-0060188702",
+							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/books/978-1503904019",
 							"protocol": "https",
 							"host": [
 								"{{apiId}}",
@@ -469,7 +522,7 @@
 							"path": [
 								"dev",
 								"books",
-								"978-0060188702"
+								"978-1503904019"
 							]
 						}
 					},
@@ -494,7 +547,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"title\": \"The Lending Library: A Novel\",\n\t\"author\": \"Aliza Fogelson\",\n\t\"publishedDate\": \"2020-07-01\"\n}"
+							"raw": "{\n\t\"title\": \"The Lending Library: A Novel\",\n\t\"author\": \"Aliza Fogelson\",\n\t\"publishedDate\": \"2020-07-01\"\n}",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/admin/books/978-1503904019/details",
@@ -536,10 +592,13 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": ""
+							"raw": "",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
-							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/books/978-1503904019",
+							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/books/978-0061969058",
 							"protocol": "https",
 							"host": [
 								"{{apiId}}",
@@ -551,7 +610,7 @@
 							"path": [
 								"dev",
 								"books",
-								"978-1503904019"
+								"978-0061969058"
 							]
 						}
 					},
@@ -570,7 +629,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": ""
+							"raw": "",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/books/978-0060188702/attachment",
@@ -668,7 +730,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Romance\",\n\t\"description\": \"Romance book\"\n}"
+							"raw": "{\n\t\"name\": \"Romance\",\n\t\"description\": \"Romance book\"\n}",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/categories",
@@ -707,7 +772,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Adventure\",\n\t\"description\": \"Adventure book\"\n}"
+							"raw": "{\n\t\"name\": \"Adventure\",\n\t\"description\": \"Adventure book\"\n}",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "https://{{apiId}}.execute-api.{{apiregion}}.amazonaws.com/dev/categories",
@@ -1134,7 +1202,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:3003/dev/categories/54f0fc67-d2f0-46c0-99f8-7371f012f8a2/booksFree?limit=5&nextKey=",
+							"raw": "http://localhost:3003/dev/categories/54f0fc67-d2f0-46c0-99f8-7371f012f8a2/books/free?limit=5&nextKey=",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1144,7 +1212,8 @@
 								"dev",
 								"categories",
 								"54f0fc67-d2f0-46c0-99f8-7371f012f8a2",
-								"booksFree"
+								"books",
+								"free"
 							],
 							"query": [
 								{
@@ -1320,25 +1389,25 @@
 	],
 	"variable": [
 		{
-			"id": "91f14183-d4e9-4890-bec3-c81010012387",
+			"id": "eb9fe45d-b195-454d-8f65-ba9349ececc0",
 			"key": "apiId",
 			"value": "oo2v8900p8",
 			"type": "string"
 		},
 		{
-			"id": "2c8c838c-7d25-4b2a-a391-e250868fe88f",
+			"id": "90059502-7162-44e2-8fea-8f28310f2b47",
 			"key": "authToken",
 			"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik1zcDZKWUFWNzBuZGxJZ3JnWXYySSJ9.eyJpc3MiOiJodHRwczovL2Rldi16dXp1LmV1LmF1dGgwLmNvbS8iLCJzdWIiOiJnb29nbGUtb2F1dGgyfDEwMTE4Nzg5MDcxMzk0OTYyMjcxMiIsImF1ZCI6InI3Y0h0UzRDeVVjdXdYTVk0T2hsNlF1bWd2WDZBeEFLIiwiaWF0IjoxNTkxNTQyMDEwLCJleHAiOjE1OTE5NzQwMTAsImF0X2hhc2giOiJXWkVTV19jY2Zmcy1LZDR5VGRFLXF3Iiwibm9uY2UiOiJZVnNMMGZrbVJyUjBudy04SGliczRoSWxwflRINkZqRyJ9.RUtrhCgc79GBNhbGLJWSamG4oxcfRK76A-QG1YkHUtYc9V7kJ3H7fXMvrYkDtP8UjDtkhrTxlClnTa-nA9fyzF6wC-asfc27retJbSkRW81s9mep-Tiz9aoll4Yjqfwqr6CHkBS_9gP_8HbHaTl0tnyTkAGXhhZc8Tmia0cinByw0gpiu9idhTbNe_w7D1No6hkom0W6a6YT8i1QPH3gjUDXdEle3pH4jIiKqImxB06Z_VEzt1NMWjPjP3tEJ7e7H5LA1tzMK5yUENshsLLkGc3lD61A2-_JLNvCb1BJAM06wyeQnMXraOGJGnrgU1oRnt1WdN2j5jmIBQqhXh6sag",
 			"type": "string"
 		},
 		{
-			"id": "67d0399d-90e5-48a9-b9a7-14d0aeeb340c",
+			"id": "5069b1b8-96f2-484a-b2e2-15aec1f6cba3",
 			"key": "authToken2",
 			"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik1zcDZKWUFWNzBuZGxJZ3JnWXYySSJ9.eyJpc3MiOiJodHRwczovL2Rldi16dXp1LmV1LmF1dGgwLmNvbS8iLCJzdWIiOiJnb29nbGUtb2F1dGgyfDEwOTk4MDEwMDY4NTE1MzY1NjA2NCIsImF1ZCI6InI3Y0h0UzRDeVVjdXdYTVk0T2hsNlF1bWd2WDZBeEFLIiwiaWF0IjoxNTkxNTQyNzAwLCJleHAiOjE1OTE5NzQ3MDAsImF0X2hhc2giOiJpNnVQNXpITUxUWGhxaGloMWw5bC1RIiwibm9uY2UiOiJMMzRJSjRZeTlKZlZxdHdsT1JWZ3VQOTFGLlJoc2VFViJ9.rCL-4fUC00mJ5eeqjGhFjJbHxR_zESknIV3G7NOc0XI7Q-ZNUCoVmp3P3hK3eJxg3d4UETq5XGnjHl0wqWKdTn37rj1QOq3V82hRYnGTj8r1q4-eePz9A09b45ohKB5a6IU9Kcx37eGgFeXzqL-c09oLh4zVzzzpzYHSFs8xuDNlDFUneJL0lY1M6G3Yr4Vbd3LTqNPgUYSbhmSMPz9HjVxpGvh0Nra7l0HEpza1oeIdLvg1Zemr4Oxe-THDJIohMq0bjodDaTghvuK9yBGzLXzS7JIgNhDl-yxYuell5EVebGSnPSpPe2jTWiRX90AWoM0O5eMphFs4c1TsW8VO_w",
 			"type": "string"
 		},
 		{
-			"id": "4c132bf2-364c-458a-9ee7-2b0d79e2f97b",
+			"id": "32975e5c-6eb5-4e67-bb25-334a881715e0",
 			"key": "apiregion",
 			"value": "eu-west-1",
 			"type": "string"
