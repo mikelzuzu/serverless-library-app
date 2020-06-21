@@ -47,7 +47,7 @@ export class SearchBooks extends React.PureComponent<SearchBooksProps, SearchBoo
         loadingBooks: false
       })
     } catch {
-      alert('Todo creation failed')
+      alert('Search book failed')
     }
   }
 

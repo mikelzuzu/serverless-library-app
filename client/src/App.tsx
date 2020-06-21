@@ -12,6 +12,7 @@ import { CreateCategory } from './components/CreateCategory'
 import { CategoriesBooks } from './components/CategoriesBooks'
 import { CategoriesBooksBorrowed } from './components/CategoriesBooksBorrowed'
 import { SearchBooks } from './components/SearchBooks'
+import { GetBook } from './components/GetBook'
 
 export interface AppProps {}
 
@@ -70,6 +71,9 @@ export default class App extends Component<AppProps, AppState> {
         <Menu.Item name="Search Books">
           <Link to="/search">Search Books</Link>
         </Menu.Item>
+        <Menu.Item name="Get Book">
+          <Link to="/books">Get Books</Link>
+        </Menu.Item>
 
         <Menu.Menu position="right">{this.logInLogOutButton()}</Menu.Menu>
       </Menu>
@@ -112,6 +116,14 @@ export default class App extends Component<AppProps, AppState> {
           exact
           render={props => {
             return <SearchBooks {...props} auth={this.props.auth} />
+          }}
+        />
+
+        <Route
+          path="/books"
+          exact
+          render={props => {
+            return <GetBook {...props} auth={this.props.auth} />
           }}
         />
 

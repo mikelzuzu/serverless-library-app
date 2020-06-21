@@ -161,12 +161,30 @@ functions:
       type: Linear10PercentEvery1Minute
       alias: Live
 
+  GetBook:
+    handler: src/lambda/http/getBook.handler
+    events:
+      - http:
+          method: get
+          path: admin/books/{isbn}
+          cors: true
+          authorizer: Auth
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}/index/${self:provider.environment.BOOKS_ID_INDEX}
+    iamRoleStatementsInherit: true
+    deploymentSettings:
+      type: Linear10PercentEvery1Minute
+      alias: Live
+
   GetBooks:
     handler: src/lambda/http/getFreeBooks.handler
     events:
       - http:
           method: get
-          path: categories/{categoryId}/booksFree
+          path: categories/{categoryId}/books/free
           cors: true
           authorizer: Auth
     iamRoleStatements:
