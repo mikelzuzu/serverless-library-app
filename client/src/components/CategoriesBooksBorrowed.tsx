@@ -6,16 +6,15 @@ import {
   Divider,
   Grid,
   Header,
-  Button,
   Image,
   Loader
 } from 'semantic-ui-react'
 
-import { getCategoriesBooks,patchBook } from '../api/books-api'
+import { getCategoriesBooksBorrowed,patchBook } from '../api/books-api'
 import Auth from '../auth/Auth'
 import { Book } from '../types/Book'
 
-interface CategoriesBooksProps {
+interface CategoriesBooksBorrowedProps {
   auth: Auth
   history: History
   match: {
@@ -25,19 +24,15 @@ interface CategoriesBooksProps {
   }
 }
 
-interface CategoriesBooksState {
+interface CategoriesBooksBorrowedState {
   books: Book[]
   loadingBooks: boolean
 }
 
-export class CategoriesBooks extends React.PureComponent<CategoriesBooksProps, CategoriesBooksState> {
-  state: CategoriesBooksState = {
+export class CategoriesBooksBorrowed extends React.PureComponent<CategoriesBooksBorrowedProps, CategoriesBooksBorrowedState> {
+  state: CategoriesBooksBorrowedState = {
     books: [],
     loadingBooks: true
-  }
-
-  handleBorrowedBooks = () => {
-    this.props.history.push(`/categories/${this.props.match.params.categoryId}/borrowed`)
   }
 
   onBookCheck = async (pos: number) => {
@@ -58,7 +53,7 @@ export class CategoriesBooks extends React.PureComponent<CategoriesBooksProps, C
 
   async componentDidMount() {
     try {
-      const books = await getCategoriesBooks(this.props.auth.getIdToken(), this.props.match.params.categoryId)
+      const books = await getCategoriesBooksBorrowed(this.props.auth.getIdToken(), this.props.match.params.categoryId)
       this.setState({
         books,
         loadingBooks: false
@@ -72,15 +67,6 @@ export class CategoriesBooks extends React.PureComponent<CategoriesBooksProps, C
     return (
       <div>
         <Header as="h1">BOOKs</Header>
-
-        <Button
-          primary
-          size="huge"
-          className="search-button"
-          onClick={this.handleBorrowedBooks}
-        >
-          Check borrowed books
-        </Button>
 
         {this.renderBooks()}
       </div>

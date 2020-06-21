@@ -91,6 +91,9 @@ Books in a Category:
 Borrowing a book
 ![Alt text](screenshots/frontend/selfBorrowed.png?raw=true "Borrowed a book")
 
+Borrowed by my client
+![Alt text](screenshots/frontend/BorrowedByMe.png?raw=true "Borrowed by me")
+
 All Book:
 ![Alt text](screenshots/frontend/adminBooksPage.png?raw=true "All book")
 

@@ -10,6 +10,7 @@ import { Books } from './components/Books'
 import { CategoriesList } from './components/CategoriesList'
 import { CreateCategory } from './components/CreateCategory'
 import { CategoriesBooks } from './components/CategoriesBooks'
+import { CategoriesBooksBorrowed } from './components/CategoriesBooksBorrowed'
 import { SearchBooks } from './components/SearchBooks'
 
 export interface AppProps {}
@@ -127,6 +128,14 @@ export default class App extends Component<AppProps, AppState> {
           exact
           render={props => {
             return <CategoriesBooks {...props} auth={this.props.auth} />
+          }}
+        />
+
+        <Route
+          path="/categories/:categoryId/borrowed"
+          exact
+          render={props => {
+            return <CategoriesBooksBorrowed {...props} auth={this.props.auth} />
           }}
         />
 
