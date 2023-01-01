@@ -30,9 +30,9 @@
     "serverless-reqvalidator-plugin": "^1.0.3",
     "serverless-s3-local": "^0.6.1",
     "serverless-webpack": "^5.2.0",
-    "ts-loader": "^5.3.3",
+    "ts-loader": "^9.4.2",
     "typescript": "^3.4.1",
-    "webpack": "^4.29.0"
+    "webpack": "^5.75.0"
   },
   "author": "Mikel Zuzuarregui",
   "license": "MIT"
